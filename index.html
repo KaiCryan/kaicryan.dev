@@ -1,0 +1,2431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kai Cryan — Work</title>
+<meta name="description" content="Kai Cryan — web development &amp; infrastructure. Real project case studies, including a freelance e-commerce site (CODE369) and a self-hosted home server, built while deliberately broadening skills across the stack.">
+<meta property="og:title" content="Kai Cryan — Work">
+<meta property="og:description" content="Real project case studies in web development and infrastructure, built while deliberately broadening skills across the stack.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kaicryan.dev/">
+<meta property="og:image" content="https://kaicryan.dev/assets/images/og-thumbnail.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Kai Cryan — Work">
+<meta name="twitter:description" content="Real project case studies in web development and infrastructure, built while deliberately broadening skills across the stack.">
+<meta name="twitter:image" content="https://kaicryan.dev/assets/images/og-thumbnail.png">
+<link rel="icon" href="/assets/images/favicon.ico?v=20260812" sizes="any">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16.png?v=20260812">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32.png?v=20260812">
+<link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png?v=20260812">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Instrument+Serif&display=swap" rel="stylesheet">
+<style>
+	:root {
+		--bg: #08090b;
+		--surface: #15181d;
+		--surface-2: #1b1f26;
+		--border: #262b33;
+		--ink: #f2f1ee;
+		--muted: #9aa1ab;
+		--accent: #3b82f6;
+		--accent-soft: rgba(59, 130, 246, 0.14);
+		--font: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+		--font-serif: "Instrument Serif", Georgia, serif;
+	}
+	* { box-sizing: border-box; }
+	html { scroll-behavior: smooth; overflow-x: hidden; }
+	body {
+		margin: 0;
+		overflow-wrap: break-word;
+		background-color: var(--bg);
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.09'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+		background-repeat: repeat;
+		color: var(--ink);
+		font-family: var(--font);
+		font-size: 16.5px;
+		line-height: 1.65;
+		-webkit-font-smoothing: antialiased;
+	}
+	p { color: var(--muted); }
+	a { color: var(--accent); transition: color 0.2s ease, opacity 0.2s ease; }
+	a:hover { opacity: 0.75; }
+
+	/* Accessibility: visible skip link + consistent focus ring for keyboard nav */
+	.skip-link {
+		position: absolute;
+		top: -48px;
+		left: 12px;
+		z-index: 100;
+		background: var(--accent);
+		color: #06111f;
+		padding: 10px 18px;
+		border-radius: 6px;
+		font-weight: 700;
+		font-size: 0.9rem;
+		text-decoration: none;
+		transition: top 0.15s ease;
+	}
+	.skip-link:focus { top: 12px; }
+	a:focus-visible, button:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 3px;
+		border-radius: 2px;
+	}
+
+	nav.topnav {
+		position: sticky;
+		top: 0;
+		z-index: 10;
+		background: rgba(13, 15, 18, 0.88);
+		backdrop-filter: blur(10px);
+		border-bottom: 1px solid var(--border);
+	}
+	.topnav-inner {
+		max-width: 1080px;
+		margin: 0 auto;
+		padding: 20px 28px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		row-gap: 10px;
+	}
+	.brand {
+		display: inline-block;
+		font-weight: 700;
+		font-size: 1.05rem;
+		letter-spacing: 0.5px;
+		color: var(--ink);
+		text-decoration: none;
+		transition: color 0.2s ease, transform 0.2s cubic-bezier(.16,1,.3,1);
+	}
+	.brand:hover { color: var(--accent); transform: scale(1.08); }
+	.topnav-links { display: flex; gap: 28px; }
+	.topnav-links a {
+		position: relative;
+		font-size: 0.82rem;
+		font-weight: 500;
+		letter-spacing: 0.4px;
+		text-transform: uppercase;
+		color: var(--muted);
+		text-decoration: none;
+		transition: color 0.2s ease;
+	}
+	.topnav-links a::after {
+		content: "";
+		position: absolute;
+		left: 0; right: 100%;
+		bottom: -6px;
+		height: 2px;
+		background: var(--accent);
+		transition: right 0.3s cubic-bezier(.16,1,.3,1);
+	}
+	.topnav-links a:hover { color: var(--ink); }
+	.topnav-links a:hover::after { right: 0; }
+
+	.wrap { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
+
+	header.hero {
+		position: relative;
+		width: 100vw;
+		margin-left: calc(50% - 50vw);
+		min-height: calc(100svh - 70px);
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		overflow: hidden;
+	}
+	.hero-inner {
+		position: relative; z-index: 1;
+		max-width: 1080px; margin: 0 auto; width: 100%;
+		padding: 60px 28px; box-sizing: border-box;
+	}
+
+	/* Shader gradient background, scoped to the hero only (not the whole
+	   page). Uses @paper-design/shaders (vanilla, framework-agnostic build)
+	   loaded defensively via dynamic import -- if the CDN fetch is slow or
+	   fails, the hero still shows its plain --bg color underneath, nothing
+	   else on the page depends on it. Recolored to the site's own accent
+	   blue instead of the original component's cyan palette. */
+	.hero-shader-wrap {
+		position: absolute; inset: 0; z-index: -1;
+		overflow: hidden;
+	}
+	.hero-shader-wrap::after {
+		content: ""; position: absolute; inset: 0;
+		background: rgba(13, 15, 18, 0.25);
+	}
+
+	/* Ambient background (rest of the page, below the hero): fixed to the
+	   viewport, spans the full window width on wide screens and stays
+	   visible no matter how far down the page you've scrolled. */
+	.ambient-bg {
+		position: fixed;
+		inset: 0;
+		z-index: -2;
+		overflow: hidden;
+		pointer-events: none;
+	}
+	.ambient-bg::before,
+	.ambient-bg::after {
+		content: "";
+		position: absolute;
+		border-radius: 50%;
+		filter: blur(20px);
+	}
+	.ambient-bg::before {
+		top: -20vh;
+		right: -15vw;
+		width: max(55vw, 480px);
+		height: max(55vw, 480px);
+		background: radial-gradient(circle, rgba(59, 130, 246, 0.46) 0%, transparent 70%);
+		animation: glow-breathe-a 11s ease-in-out infinite;
+	}
+	.ambient-bg::after {
+		bottom: -25vh;
+		left: -18vw;
+		width: max(50vw, 440px);
+		height: max(50vw, 440px);
+		background: radial-gradient(circle, rgba(59, 130, 246, 0.36) 0%, transparent 70%);
+		animation: glow-breathe-b 14s ease-in-out infinite;
+	}
+	@keyframes glow-breathe-a {
+		0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.65; }
+		50% { transform: translate(-60px, 50px) scale(1.4); opacity: 1; }
+	}
+	@keyframes glow-breathe-b {
+		0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.55; }
+		50% { transform: translate(50px, -40px) scale(1.35); opacity: 1; }
+	}
+	/* "Signal/network" motif: a canvas-drawn field of drifting nodes with
+	   faint connecting lines between nearby ones -- same fixed
+	   full-viewport layer convention the old particle field used
+	   (persists across scroll), one z-index above .ambient-bg. Reads as
+	   network activity rather than generic floating dots, matching the
+	   site's self-hosting/infrastructure subject matter. */
+	.network-canvas {
+		position: fixed;
+		inset: 0;
+		z-index: -1;
+		pointer-events: none;
+	}
+	/* Shared network-light flicker -- reused by the nav availability pill,
+	   each section kicker's connection dot, and the footer uptime line.
+	   steps(1) makes opacity snap between keyframe values instead of
+	   easing between them, and the stops are irregular/unevenly spaced
+	   on purpose -- reads as router/switch activity-light flicker rather
+	   than a smooth decorative pulse. */
+	@keyframes flicker-dot {
+		0%, 100% { opacity: 1; }
+		4% { opacity: 0.25; }
+		8% { opacity: 1; }
+		12% { opacity: 1; }
+		16% { opacity: 0.15; }
+		20% { opacity: 1; }
+		44% { opacity: 1; }
+		47% { opacity: 0.35; }
+		50% { opacity: 1; }
+		74% { opacity: 1; }
+		77% { opacity: 0.2; }
+		81% { opacity: 1; }
+		90% { opacity: 1; }
+		92% { opacity: 0.5; }
+		94% { opacity: 1; }
+	}
+	.status-dot {
+		display: inline-block;
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: #22c55e;
+		box-shadow: 0 0 8px 2px rgba(34, 197, 94, 0.6);
+		animation: flicker-dot 2.6s steps(1) infinite;
+		flex-shrink: 0;
+	}
+	.topnav-left { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; row-gap: 6px; }
+	.status-pill {
+		display: flex;
+		align-items: center;
+		gap: 7px;
+		font-size: 0.72rem;
+		font-weight: 600;
+		letter-spacing: 0.4px;
+		text-transform: uppercase;
+		color: var(--muted);
+	}
+	.hero h1 {
+		font-family: var(--font-serif); font-weight: 400;
+		font-size: clamp(4rem, 16vw, 11.5rem);
+		/* Was 1.05 -- too tight for descenders (g/p/y) at this font size:
+		   header.hero has overflow: hidden (needed to clip the background
+		   shader/glow blobs to the hero's own bounds), so a descender that
+		   extends past a too-short line box gets clipped, not just visually
+		   cramped. 1.15 gives enough room without loosening the display-type
+		   look much at this scale. */
+		line-height: 1.15;
+		margin: 0 0 18px;
+		letter-spacing: -1px;
+		max-width: 16ch;
+		position: relative;
+		text-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+	}
+	/* Same shimmering gradient-text treatment used on the project
+	   case-study page titles (projects/code369.html, projects/home-lab.html) --
+	   applied here too so the hero name matches. */
+	@supports ((background-clip: text) or (-webkit-background-clip: text)) {
+		.hero h1 {
+			background: linear-gradient(100deg, var(--ink) 25%, var(--accent) 50%, var(--ink) 75%);
+			background-size: 220% auto;
+			-webkit-background-clip: text;
+			background-clip: text;
+			color: transparent;
+			animation: shimmer 7s ease-in-out infinite;
+		}
+	}
+	@keyframes shimmer {
+		0%, 100% { background-position: 200% center; }
+		50% { background-position: -20% center; }
+	}
+	.eyebrow {
+		text-transform: uppercase;
+		letter-spacing: 2px;
+		font-size: 0.8rem;
+		color: var(--ink);
+		opacity: 0.85;
+		font-weight: 700;
+		margin: 0 0 34px;
+		text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+	}
+	.eyebrow-cursor, .blink-cursor {
+		display: inline-block;
+		color: var(--accent);
+		animation: blink-cursor 1s step-end infinite;
+	}
+	@keyframes blink-cursor {
+		0%, 100% { opacity: 1; }
+		50% { opacity: 0; }
+	}
+	.section-divider {
+		height: 90px;
+		width: 100vw;
+		margin-left: calc(50% - 50vw);
+		background: linear-gradient(115deg, transparent, var(--accent-soft), transparent);
+		clip-path: polygon(0 34%, 100% 0%, 100% 100%, 0% 100%);
+	}
+	.section-divider.alt {
+		clip-path: polygon(0 0%, 100% 34%, 100% 100%, 0% 100%);
+	}
+	/* The divider right under the hero specifically: the default diagonal
+	   clip-path leaves the top-left 34% of its height uncovered by design
+	   (that's the point elsewhere on the page -- every other divider sits
+	   between two sections with the same plain background on both sides,
+	   so the gap just shows more of that same background through). Here
+	   it instead exposed a visible seam between the hero's own rich
+	   shader background (which stops dead at the hero's exact bottom
+	   edge) and the plainer page background underneath -- a real
+	   discontinuity, not a stylistic gap. Flush/full-width clip-path just
+	   for this one divider so it actually abuts the hero's bottom edge
+	   across the whole width, rather than leaving part of that edge
+	   exposed to a mismatched background. */
+	header.hero + .section-divider {
+		clip-path: polygon(0 0%, 100% 0%, 100% 100%, 0% 100%);
+	}
+	.lede {
+		font-size: 1.15rem;
+		max-width: 56ch;
+		color: var(--ink);
+		opacity: 0.82;
+		line-height: 1.7;
+		position: relative;
+		text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+	}
+	.cta-row { margin-top: 40px; display: flex; gap: 14px; flex-wrap: wrap; position: relative; }
+	.btn {
+		display: inline-block;
+		padding: 14px 28px;
+		border-radius: 6px;
+		text-decoration: none;
+		font-weight: 600;
+		font-size: 0.92rem;
+		letter-spacing: 0.2px;
+		position: relative;
+		overflow: hidden;
+		transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.3s ease, transform 0.25s cubic-bezier(.16,1,.3,1);
+	}
+	/* Shimmer sweep on hover, layered on top of the existing background/
+	   border/shadow/lift hover states above rather than replacing them. */
+	.btn::before {
+		content: ""; position: absolute; top: 0; bottom: 0; left: -60%; width: 40%;
+		background: linear-gradient(100deg, transparent, rgba(255,255,255,0.3), transparent);
+		transform: skewX(-18deg); transition: left 0.6s cubic-bezier(.16,1,.3,1); pointer-events: none;
+	}
+	.btn:hover::before { left: 130%; }
+	/* Outlined at rest, fills in solid accent-blue on hover -- brought
+	   back from .project-block .link (which used to have this same
+	   treatment) rather than the permanently-solid background this used
+	   to have. Its own ::after handles the fill so it doesn't compete
+	   with the shimmer sweep above, which is disabled here specifically
+	   (kept for .btn-secondary) to avoid two hover animations at once. */
+	.btn-primary {
+		z-index: 0;
+		background: transparent;
+		border: 1.5px solid var(--accent);
+		color: var(--ink);
+	}
+	.btn-primary::before { display: none; }
+	.btn-primary::after {
+		content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit;
+		background: var(--accent); transform: scaleX(0); transform-origin: left;
+		transition: transform 0.7s cubic-bezier(.16,1,.3,1);
+	}
+	.btn-primary:hover { color: #06111f; box-shadow: 0 10px 30px rgba(59, 130, 246, 0.45); }
+	.btn-primary:hover::after { transform: scaleX(1); }
+	.btn-secondary { border: 1px solid rgba(242, 241, 238, 0.4); color: var(--ink); }
+	.btn-secondary:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(59, 130, 246, 0.25); }
+
+	section { padding: 90px 0; scroll-margin-top: 90px; }
+	.section-head { margin-bottom: 44px; }
+	.contact-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+	.contact-head .copy-btn { flex-shrink: 0; }
+	.section-head .kicker {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		text-transform: uppercase;
+		letter-spacing: 2px;
+		font-size: 0.78rem;
+		color: var(--accent);
+		font-weight: 700;
+		margin-bottom: 10px;
+	}
+	.section-head .kicker::before {
+		content: "";
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background: var(--accent);
+		box-shadow: 0 0 6px 1px rgba(59, 130, 246, 0.7);
+		animation: flicker-dot 2.9s steps(1) infinite;
+		flex-shrink: 0;
+	}
+	h2 { font-weight: 700; font-size: clamp(2.2rem, 4vw, 3.2rem); margin: 0; letter-spacing: -0.4px; }
+
+	.approach-list { display: flex; flex-direction: column; gap: 34px; }
+	.approach-item { display: flex; gap: 24px; align-items: flex-start; }
+	.approach-num {
+		font-size: 2.4rem; font-weight: 700; color: var(--accent); min-width: 56px; letter-spacing: -1px;
+		animation: num-glow 4s ease-in-out infinite;
+	}
+	.approach-list .approach-item:nth-child(2) .approach-num { animation-delay: 0.6s; }
+	.approach-list .approach-item:nth-child(3) .approach-num { animation-delay: 1.2s; }
+	@keyframes num-glow {
+		0%, 100% { text-shadow: 0 0 0 rgba(59, 130, 246, 0); }
+		50% { text-shadow: 0 0 18px rgba(59, 130, 246, 0.55); }
+	}
+	.approach-item h3 { margin: 0 0 8px; font-size: 1.08rem; color: var(--ink); font-weight: 600; }
+	.approach-item p { margin: 0; font-size: 0.95rem; max-width: 62ch; }
+
+	.about-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 56px; align-items: start; margin-bottom: 32px; }
+	.about-bio p { margin: 0 0 18px; font-size: 1rem; line-height: 1.7; max-width: 58ch; color: var(--muted); }
+	.about-bio p:last-child { margin-bottom: 0; }
+	.about-bio strong { color: var(--ink); font-weight: 600; }
+	.about-facts { display: flex; flex-direction: column; gap: 20px; border-left: 1px solid var(--border); padding-left: 28px; }
+	.about-fact-label {
+		display: block; text-transform: uppercase; letter-spacing: 1px;
+		font-size: 0.7rem; font-weight: 700; color: var(--accent); margin-bottom: 4px;
+	}
+	.about-fact-value { display: block; font-size: 0.95rem; color: var(--ink); }
+	@media (max-width: 760px) {
+		.about-grid { grid-template-columns: 1fr; gap: 28px; }
+		.about-facts { border-left: none; padding-left: 0; border-top: 1px solid var(--border); padding-top: 22px; }
+	}
+
+	.process-timeline { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; position: relative; margin-top: 8px; }
+	.process-timeline::before { content: ""; position: absolute; top: 5px; left: 5%; right: 5%; height: 1px; background: var(--border); z-index: 0; }
+	.process-step { position: relative; z-index: 1; }
+	/* Reuses the same flicker-dot keyframe as the kicker dots and status
+	   pill, staggered per step, rather than a new animation. */
+	.process-dot {
+		width: 10px; height: 10px; border-radius: 50%; background: var(--accent);
+		box-shadow: 0 0 6px 1px rgba(59, 130, 246, 0.6); margin-bottom: 14px;
+		animation: flicker-dot 3.2s steps(1) infinite;
+	}
+	.process-timeline .process-step:nth-child(2) .process-dot { animation-delay: 0.5s; }
+	.process-timeline .process-step:nth-child(3) .process-dot { animation-delay: 1s; }
+	.process-timeline .process-step:nth-child(4) .process-dot { animation-delay: 1.5s; }
+	.process-step h3 { margin: 0 0 8px; font-size: 1rem; color: var(--ink); font-weight: 600; }
+	.process-step p { margin: 0; font-size: 0.88rem; color: var(--muted); }
+	@media (max-width: 700px) {
+		.process-timeline { grid-template-columns: 1fr; gap: 24px; }
+		.process-timeline::before { display: none; }
+	}
+
+	.project-block {
+		padding: 44px 0;
+		display: grid;
+		grid-template-columns: 1.1fr 0.9fr;
+		gap: 56px;
+		align-items: center;
+	}
+	.project-block.reverse { direction: rtl; }
+	.project-block.reverse > * { direction: ltr; }
+	/* Redesigned from scratch after three failed clipping fixes: the
+	   actual problem was architectural, not a specific CSS bug -- the
+	   tilt transform lived on the *inner* <img>, while this *outer*
+	   wrapper (with its own static border/shape) tried to clip it.
+	   However that clip was actually implemented, a flat, non-rotating
+	   frame around 3D-rotating content will always look like a static
+	   box around a tilted photo. Fix: this element now does the
+	   rotating *and* the clipping itself -- self-clipping your own
+	   transformed box is always visually consistent, there's no
+	   ancestor/descendant relationship left to go wrong. On hover it
+	   also lifts in z-index and gets a strong shadow, so it genuinely
+	   sits above the rest of the page rather than fighting to stay
+	   contained. */
+	.project-img-wrap {
+		position: relative;
+		z-index: 1;
+		overflow: hidden;
+		border-radius: 8px;
+		border: 1px solid var(--border);
+		transition: box-shadow 0.3s ease, transform 0.15s ease-out, z-index 0s;
+	}
+	.project-img-wrap.tilting {
+		z-index: 30;
+		box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55), 0 0 50px rgba(59, 130, 246, 0.35);
+	}
+	.project-img-wrap::after {
+		content: "";
+		position: absolute;
+		left: 0; right: 0;
+		height: 3px;
+		top: -5%;
+		background: linear-gradient(90deg, transparent, rgba(147, 197, 253, 0.9), transparent);
+		box-shadow: 0 0 14px 3px rgba(59, 130, 246, 0.65);
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.2s ease;
+	}
+	.project-img-wrap:hover::after {
+		opacity: 1;
+		animation: scan-sweep 1.4s linear infinite;
+	}
+	@keyframes scan-sweep {
+		0% { top: -5%; }
+		100% { top: 105%; }
+	}
+	/* The border now lives on the wrapper (see above -- the thing that
+	   actually has the visible rounded-rectangle shape) rather than the
+	   image, since the image itself no longer has its own separate
+	   transform to be inconsistent with. */
+	.project-block img {
+		width: 100%;
+		display: block;
+		filter: grayscale(35%) contrast(1.05);
+		transition: filter 0.35s ease;
+	}
+	.project-block img:hover { filter: grayscale(0%) contrast(1.08); }
+	.project-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+	.project-tag {
+		font-size: 0.7rem;
+		text-transform: uppercase;
+		letter-spacing: 0.6px;
+		font-weight: 700;
+		color: var(--accent);
+		background: var(--accent-soft);
+		padding: 4px 10px;
+		border-radius: 999px;
+		transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+	}
+	.project-tag:hover { transform: translateY(-2px); background: rgba(59, 130, 246, 0.3); box-shadow: 0 6px 16px rgba(59, 130, 246, 0.25); }
+	.project-block h3 { font-size: 1.9rem; font-weight: 700; margin: 0 0 16px; letter-spacing: -0.4px; color: var(--ink); }
+	.project-block p { font-size: 1rem; margin: 0 0 22px; max-width: 48ch; color: var(--muted); }
+	/* Reinstated: the fill-in-on-hover treatment this used to have,
+	   removed in favor of .btn-secondary's plain outline a couple of
+	   rounds ago -- same ::after sweep recipe now used on .btn-primary,
+	   so this and .btn-primary share one fill-in family again rather
+	   than each having their own bespoke version of it. */
+	.project-block .link {
+		position: relative;
+		z-index: 0;
+		overflow: hidden;
+		display: inline-flex;
+		align-items: center;
+		gap: 10px;
+		padding: 13px 24px;
+		border-radius: 999px;
+		border: 1.5px solid var(--accent);
+		font-weight: 600;
+		font-size: 0.92rem;
+		letter-spacing: 0.2px;
+		text-decoration: none;
+		color: var(--ink);
+		transition: color 0.35s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.25s cubic-bezier(.16,1,.3,1);
+	}
+	.project-block .link::after {
+		content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit;
+		background: var(--accent); transform: scaleX(0); transform-origin: left;
+		transition: transform 0.7s cubic-bezier(.16,1,.3,1);
+	}
+	.project-block .link:hover {
+		color: #06111f;
+		border-color: var(--accent);
+		box-shadow: 0 8px 24px rgba(59, 130, 246, 0.25);
+		transform: translateY(-3px);
+	}
+	.project-block .link:hover::after { transform: scaleX(1); }
+	.project-block .link .arrow { display: inline-block; transition: transform 0.3s cubic-bezier(.16,1,.3,1); }
+	.project-block .link:hover .arrow { transform: translateX(6px); }
+	.more-projects-note { color: var(--muted); font-size: 0.88rem; margin-top: 10px; }
+
+	.notes-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+	/* Gives these cards actual fill/depth (--surface, documented at the
+	   .build-cta-card rule above as "a card/nav-pill color") instead of
+	   just an outline on the page background -- previously the only
+	   thing on the page that looked like a real card without one. */
+	.note-item {
+		position: relative;
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: 10px;
+		padding: 24px 26px 22px;
+		overflow: hidden;
+		transition: border-color 0.25s ease, transform 0.25s cubic-bezier(.16,1,.3,1), box-shadow 0.25s ease;
+	}
+	.note-item::before {
+		content: "";
+		position: absolute; top: 0; left: 0; right: 0; height: 2px;
+		background: linear-gradient(90deg, transparent, var(--accent), transparent);
+		opacity: 0;
+		transition: opacity 0.25s ease;
+	}
+	.note-item:hover {
+		border-color: rgba(59, 130, 246, 0.45);
+		transform: translateY(-4px);
+		box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35), 0 0 30px rgba(59, 130, 246, 0.12);
+	}
+	.note-item:hover::before { opacity: 1; }
+	.note-meta { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
+	.note-tag {
+		font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 700;
+		color: var(--accent); background: var(--accent-soft); padding: 3px 10px; border-radius: 999px;
+	}
+	.note-date {
+		font-family: "SFMono-Regular", Consolas, monospace; font-size: 0.7rem;
+		color: var(--muted); letter-spacing: 0.5px;
+	}
+	.note-item h3 { margin: 0 0 10px; font-size: 1.05rem; font-weight: 700; color: var(--ink); line-height: 1.35; }
+	.note-item p { margin: 0; font-size: 0.87rem; line-height: 1.65; color: var(--muted); }
+	.note-item code {
+		font-family: "SFMono-Regular", Consolas, monospace; font-size: 0.85em;
+		color: var(--ink); background: var(--accent-soft); padding: 1px 5px; border-radius: 4px;
+	}
+	@media (max-width: 700px) {
+		.notes-list { grid-template-columns: 1fr; }
+	}
+
+	.contact-links { display: flex; flex-wrap: wrap; gap: 40px 56px; }
+	.contact-link {
+		display: inline-block;
+		text-decoration: none;
+		color: var(--ink);
+		font-weight: 700;
+		font-size: 1.1rem;
+		transition: color 0.2s ease, transform 0.25s cubic-bezier(.16,1,.3,1);
+	}
+	.contact-link:hover { color: var(--accent); transform: translateY(-3px); }
+	.contact-label {
+		display: block;
+		text-transform: uppercase;
+		letter-spacing: 1px;
+		font-size: 0.72rem;
+		color: var(--muted);
+		font-weight: 700;
+		margin-bottom: 8px;
+	}
+	.contact-item { display: flex; align-items: center; gap: 14px; }
+
+	/* Small pill utility buttons -- email copy, share, copy-link, reset.
+	   Distinct from the big primary/secondary .btn CTAs on purpose, since
+	   these are secondary utility actions, not calls to action. */
+	.copy-btn {
+		font-family: inherit; font-size: 0.72rem; letter-spacing: 0.4px; text-transform: uppercase;
+		color: var(--muted); background: transparent; border: 1px solid var(--border);
+		border-radius: 999px; padding: 7px 14px; cursor: pointer;
+		display: inline-flex; align-items: center; gap: 5px;
+		transition: border-color 0.2s ease, color 0.2s ease;
+	}
+	.copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+	.copy-btn.copied { border-color: #22c55e; color: #22c55e; }
+	.copy-check { width: 0; opacity: 0; flex-shrink: 0; transition: width 0.2s ease; }
+	.copy-btn.copied .copy-check { width: 12px; opacity: 1; }
+	.copy-check path { stroke-dasharray: 24; stroke-dashoffset: 24; }
+	.copy-btn.copied .copy-check path { animation: copy-check-draw 0.35s ease 0.1s forwards; }
+	@keyframes copy-check-draw { to { stroke-dashoffset: 0; } }
+
+	/* Closing CTA: one clear focal action (the button, alone, prominent).
+	   Lives inside #contact, right below the contact-links -- a top
+	   border + margin separates it as its own beat within the section,
+	   rather than the page-level top/bottom padding it used when it was
+	   a standalone block between two section dividers. */
+	.secondary-cta { text-align: center; margin-top: 56px; padding-top: 48px; border-top: 1px solid var(--border); }
+	/* Same big serif display type as .hero h1/section h2s, not scaled-up
+	   body text -- reads as a proper mini-headline (with a headline's own
+	   visual weight and character) rather than a plain sentence that just
+	   got bigger and bolder, and gives it clearer separation from the
+	   button below it than font-size alone did. */
+	.secondary-cta p {
+		margin: 0 0 34px;
+		font-family: var(--font-serif);
+		font-weight: 400;
+		font-size: clamp(2rem, 5vw, 3.2rem);
+		line-height: 1.15;
+		color: var(--ink);
+	}
+	/* Same shimmering gradient-text treatment as .hero h1 and the project
+	   case-study titles -- reuses the existing global @keyframes shimmer,
+	   no new animation defined. */
+	@supports ((background-clip: text) or (-webkit-background-clip: text)) {
+		.secondary-cta p {
+			background: linear-gradient(100deg, var(--ink) 25%, var(--accent) 50%, var(--ink) 75%);
+			background-size: 220% auto;
+			-webkit-background-clip: text;
+			background-clip: text;
+			color: transparent;
+			animation: shimmer 7s ease-in-out infinite;
+		}
+	}
+	/* Footer: local time + back-to-top on the left, copyright + reset on
+	   the right. back-to-top lives here as a plain inline text link
+	   rather than a separate floating fixed button. */
+	.footer-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; flex-wrap: wrap; }
+	.footer-col { display: flex; flex-direction: column; gap: 12px; }
+	.footer-col-right { align-items: flex-end; text-align: right; }
+	.footer-col p { margin: 0; }
+	.footer-link-btn {
+		font-family: inherit; font-size: 0.78rem; color: var(--muted); background: none; border: none;
+		padding: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+		transition: color 0.2s ease;
+	}
+	.footer-link-btn:hover { color: var(--accent); }
+	@media (max-width: 600px) {
+		.footer-row { flex-direction: column; }
+		.footer-col-right { align-items: flex-start; text-align: left; }
+	}
+
+	footer { padding: 50px 0 60px; color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--border); }
+	footer a { color: var(--accent); }
+	.uptime-counter {
+		margin-top: 10px;
+		display: flex;
+		align-items: center;
+		gap: 7px;
+		font-family: "SFMono-Regular", Consolas, monospace;
+		font-size: 0.72rem;
+		color: var(--muted);
+		opacity: 0.8;
+	}
+
+	.magnetic { display: inline-block; transition: transform 0.15s ease-out; }
+	.click-ping {
+		position: fixed;
+		width: 10px; height: 10px;
+		border-radius: 50%;
+		border: 2px solid var(--accent);
+		pointer-events: none;
+		z-index: 9998;
+		transform: translate(-50%, -50%) scale(1);
+		opacity: 0.9;
+		animation: ping-expand 0.6s ease-out forwards;
+	}
+	@keyframes ping-expand {
+		to { transform: translate(-50%, -50%) scale(6); opacity: 0; }
+	}
+
+	/* Custom cursor: a small solid dot that tracks the pointer exactly, plus
+	   a larger ring that trails behind it (JS-driven lerp easing). Expands
+	   and tints accent-blue over anything interactive; morphs into a solid
+	   "View" pill specifically over project screenshots. Desktop-only --
+	   guarded here and in JS by (hover: hover) and (pointer: fine), so touch
+	   devices keep their native cursor untouched. */
+	@media (hover: hover) and (pointer: fine) {
+		body.custom-cursor-active,
+		body.custom-cursor-active a,
+		body.custom-cursor-active button,
+		body.custom-cursor-active input,
+		body.custom-cursor-active textarea,
+		body.custom-cursor-active [role="button"] {
+			cursor: none;
+		}
+		.cursor-dot, .cursor-ring {
+			position: fixed;
+			top: 0; left: 0;
+			pointer-events: none;
+			z-index: 9999;
+			border-radius: 50%;
+			opacity: 0;
+			transition: opacity 0.25s ease;
+		}
+		body.custom-cursor-active .cursor-dot,
+		body.custom-cursor-active .cursor-ring {
+			opacity: 1;
+		}
+		.cursor-dot {
+			width: 8px; height: 8px;
+			margin: -4px 0 0 -4px;
+			background: var(--accent);
+			box-shadow: 0 0 14px 3px rgba(59, 130, 246, 0.65);
+			transition: opacity 0.25s ease, transform 0.25s cubic-bezier(.16,1,.3,1);
+		}
+		.cursor-ring {
+			width: 38px; height: 38px;
+			margin: -19px 0 0 -19px;
+			border: 1.5px solid rgba(59, 130, 246, 0.55);
+			display: flex; align-items: center; justify-content: center;
+			transition: opacity 0.25s ease, width 0.35s cubic-bezier(.16,1,.3,1),
+				height 0.35s cubic-bezier(.16,1,.3,1), margin 0.35s cubic-bezier(.16,1,.3,1),
+				border-color 0.3s ease, background-color 0.3s ease;
+		}
+		.cursor-ring span {
+			opacity: 0;
+			font-size: 0.62rem;
+			letter-spacing: 1.5px;
+			text-transform: uppercase;
+			font-weight: 700;
+			color: #06111f;
+			transition: opacity 0.2s ease;
+		}
+		body.cursor-hover .cursor-dot { transform: scale(0); }
+		body.cursor-hover .cursor-ring {
+			width: 68px; height: 68px;
+			margin: -34px 0 0 -34px;
+			border-color: var(--accent);
+			background: rgba(59, 130, 246, 0.14);
+		}
+		body.cursor-view .cursor-ring {
+			width: 88px; height: 88px;
+			margin: -44px 0 0 -44px;
+			background: var(--accent);
+			border-color: var(--accent);
+		}
+		body.cursor-view .cursor-ring span { opacity: 1; }
+	}
+
+	/* Scroll reveal: real time-based transition (not scroll-linked), toggled
+	   by JS (IntersectionObserver) adding/removing .is-visible. Gated behind
+	   body.js-reveal-ready (added by that same script) so if JS never runs,
+	   .reveal elements simply render normally visible -- no permanently-
+	   invisible content as a failure mode. */
+	.reveal {
+		transition: opacity 0.9s cubic-bezier(.16,1,.3,1), transform 0.9s cubic-bezier(.16,1,.3,1), filter 0.9s cubic-bezier(.16,1,.3,1);
+	}
+	body.js-reveal-ready .reveal {
+		opacity: 0;
+		transform: translateY(90px) scale(0.9);
+		filter: blur(36px);
+	}
+	/* Used when the element is currently positioned above the viewport --
+	   i.e. it's about to enter (or just left) via the TOP edge, which
+	   happens while scrolling back up. Mirrors the default below-offset. */
+	body.js-reveal-ready .reveal.reveal-from-above {
+		transform: translateY(-90px) scale(0.9);
+	}
+	body.js-reveal-ready .reveal.is-visible {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+		filter: blur(0);
+	}
+
+	@media (max-width: 760px) {
+		.topnav-links { display: none; }
+		.project-block, .project-block.reverse { grid-template-columns: 1fr; direction: ltr; }
+	}
+	/* Boot screen: a brief Linux-style boot log shown once per session
+	   before the site "comes online" -- the most direct expression of
+	   the signal/infrastructure conceit running through the rest of the
+	   page. Static HTML+CSS (no FOUC -- it's opaque and covers the page
+	   from first paint), JS just drives the log lines and fade-out. */
+	.boot-screen {
+		position: fixed;
+		inset: 0;
+		z-index: 10000;
+		background: #05070a;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 40px;
+		transform-origin: center;
+	}
+	.boot-screen.boot-off {
+		animation: crt-off 1.6s cubic-bezier(.16, 1, .3, 1) forwards;
+	}
+	/* Exaggerated, slowed-down CRT power-off: a slow bulge and brightening
+	   build-up, a hard flash, a deliberate vertical collapse to a thin
+	   line, a couple of flickers while it holds as a line (echoes the
+	   network-light flicker motif), then a slow horizontal collapse and
+	   fade. Each stage is long enough to actually read as its own beat
+	   rather than blurring together. */
+	@keyframes crt-off {
+		0% { transform: scale(1, 1); opacity: 1; filter: brightness(1) drop-shadow(0 0 0 rgba(59, 130, 246, 0)); }
+		10% { transform: scale(1.01, 1.02); opacity: 1; filter: brightness(1.2) drop-shadow(0 0 0 rgba(59, 130, 246, 0)); }
+		20% { transform: scale(1.04, 1.08); opacity: 1; filter: brightness(1.8) drop-shadow(0 0 20px rgba(59, 130, 246, 0.4)); }
+		28% { transform: scale(1.06, 1.1); opacity: 1; filter: brightness(3.2) drop-shadow(0 0 40px rgba(147, 197, 253, 0.8)); }
+		38% { transform: scale(1, 0.16); opacity: 1; filter: brightness(4) drop-shadow(0 0 60px rgba(147, 197, 253, 0.9)); }
+		46% { transform: scale(1, 0.012); opacity: 1; filter: brightness(4.5) drop-shadow(0 0 50px rgba(147, 197, 253, 1)); }
+		54% { transform: scale(1, 0.012); opacity: 1; filter: brightness(1.6) drop-shadow(0 0 14px rgba(59, 130, 246, 0.5)); }
+		62% { transform: scale(1, 0.012); opacity: 1; filter: brightness(2.6) drop-shadow(0 0 30px rgba(147, 197, 253, 0.7)); }
+		68% { transform: scale(1, 0.012); opacity: 1; filter: brightness(1.3) drop-shadow(0 0 10px rgba(59, 130, 246, 0.4)); }
+		78% { transform: scale(1, 0.01); opacity: 1; filter: brightness(1.8) drop-shadow(0 0 18px rgba(59, 130, 246, 0.5)); }
+		88% { transform: scale(0.4, 0.01); opacity: 1; filter: brightness(1.4) drop-shadow(0 0 12px rgba(59, 130, 246, 0.4)); }
+		96% { transform: scale(0.03, 0.006); opacity: 0.9; filter: brightness(1.2) drop-shadow(0 0 6px rgba(59, 130, 246, 0.3)); }
+		100% { transform: scale(0.001, 0.001); opacity: 0; filter: brightness(1) drop-shadow(0 0 0 rgba(59, 130, 246, 0)); }
+	}
+	.boot-lines {
+		width: 100%;
+		max-width: 640px;
+		font-family: "SFMono-Regular", Consolas, monospace;
+		font-size: 0.85rem;
+		line-height: 1.9;
+		color: var(--muted);
+	}
+	.boot-line .ok { color: #22c55e; font-weight: 700; }
+	.boot-line--active::after {
+		content: "\2588";
+		display: inline-block;
+		margin-left: 1px;
+		color: var(--accent);
+		animation: blink-cursor 1s step-end infinite;
+	}
+
+	/* "Let's build something" fluid CTA expand. Shape/motion (near-
+	   fullscreen pill-to-panel, spring physics) still follows the
+	   downloaded template closely, but color now reuses this site's own
+	   tokens (--accent, --surface, --ink, --muted, --border) instead of
+	   the template's literal #004FE5/#001F63/white palette, so the panel
+	   reads as part of this page rather than a foreign blue block dropped
+	   into it. */
+	.build-cta-overlay {
+		position: fixed;
+		inset: 0;
+		z-index: 200;
+		background: rgba(5, 6, 8, 0);
+		transition: background 0.4s ease;
+		pointer-events: none;
+	}
+	.build-cta-overlay.is-open { background: rgba(5, 6, 8, 0.72); pointer-events: auto; }
+	/* Reuses .btn/.btn-primary as-is (see the shared button rules earlier
+	   in this stylesheet) rather than redefining transparent-at-rest/
+	   fills-on-hover from scratch -- that's exactly the existing
+	   treatment on every other primary button on this page. Only the
+	   shape differs, via this ID override (higher specificity than the
+	   shared classes, so it wins without needing !important); .btn-
+	   primary::after's own `border-radius: inherit` picks this up too,
+	   so the hover fill keeps the same pill shape. */
+	/* font-family: inherit is needed here specifically because this is a
+	   real <button>, not an <a> like most other .btn usages on the page --
+	   browsers don't inherit font-family into form controls by default,
+	   so without this it silently falls back to the browser's UI font
+	   instead of --font ("Space Grotesk"). Same fix .copy-btn already
+	   has elsewhere on the page for the same reason. */
+	#buildCtaBtn { border-radius: 100px; font-family: inherit; }
+	.build-cta-card {
+		position: fixed;
+		overflow: hidden;
+		box-sizing: border-box;
+		/* --bg (the page's actual background color), not --surface (a
+		   card/nav-pill color) -- at this size the panel reads as its own
+		   little page, not a card floating on the page, so it should
+		   match what the page itself sits on. */
+		background: var(--bg);
+		border: 1px solid var(--border);
+		box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+		/* Position/size/opacity are driven directly by JS via animate()
+		   (motion's vanilla animation engine, imported in the FLIP script
+		   below) rather than a CSS `transition` list. pointer-events:
+		   none at rest (and during the close shrink) is a defense-in-
+		   depth measure, tied synchronously to the same .is-expanded
+		   class JS already toggles at the very start of open/close -- if
+		   the card is ever left stranded mid-shrink for any reason (a
+		   bug, a slow CDN, anything), it can't sit on top of the real
+		   button eating clicks meant for it, since it's already non-
+		   interactive the instant closeCta() removes .is-expanded. */
+		opacity: 0;
+		pointer-events: none;
+	}
+	.build-cta-card.is-expanded { pointer-events: auto; }
+	/* Same breathing ambient-glow treatment as .ambient-bg on the
+	   homepage itself (same keyframes, same blur/radial-gradient
+	   technique) -- reused here rather than left to the mesh-gradient
+	   shader alone, so the panel actually reads as a piece of this page
+	   rather than a generic dark surface with an unrelated blue blob
+	   moving on it. */
+	.build-cta-card::before,
+	.build-cta-card::after {
+		content: "";
+		position: absolute;
+		z-index: 0;
+		border-radius: 50%;
+		filter: blur(20px);
+		pointer-events: none;
+	}
+	.build-cta-card::before {
+		top: -15vh;
+		right: -10vw;
+		width: max(45vw, 420px);
+		height: max(45vw, 420px);
+		background: radial-gradient(circle, rgba(59, 130, 246, 0.42) 0%, transparent 70%);
+		animation: glow-breathe-a 11s ease-in-out infinite;
+	}
+	.build-cta-card::after {
+		bottom: -18vh;
+		left: -12vw;
+		width: max(40vw, 380px);
+		height: max(40vw, 380px);
+		background: radial-gradient(circle, rgba(59, 130, 246, 0.32) 0%, transparent 70%);
+		animation: glow-breathe-b 14s ease-in-out infinite;
+	}
+	.build-cta-close {
+		position: absolute;
+		top: 20px;
+		right: 20px;
+		z-index: 2;
+		width: 38px;
+		height: 38px;
+		border-radius: 50%;
+		border: none;
+		background: transparent;
+		color: var(--ink);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		opacity: 0;
+		transition: opacity 0.25s ease 0.2s, background 0.2s ease;
+	}
+	.build-cta-close:hover { background: var(--accent-soft); }
+	.build-cta-card.is-expanded .build-cta-close { opacity: 1; }
+	.build-cta-content {
+		position: relative;
+		z-index: 1;
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		padding: 48px 44px;
+		box-sizing: border-box;
+		/* overflow stays hidden until the card is fully settled (see
+		   .is-settled below, added by JS only once the open animation has
+		   actually finished) -- while the card's height is actively
+		   shrinking or growing, the content doesn't resize to match in
+		   real time, so overflow-y: auto during that window shows a
+		   scrollbar appearing and disappearing mid-animation, which
+		   looks broken rather than like part of the effect. */
+		overflow: hidden;
+		opacity: 0;
+		transform: translateY(8px);
+		/* This (the base, "not expanded" state) is what applies when
+		   .is-expanded is *removed* -- i.e. while closing -- so it's
+		   short and undelayed on purpose: the content should disappear
+		   quickly right as the shrink starts, leaving just the solid
+		   surface-colored box behind for the rest of the close animation,
+		   rather than visibly fading while the box shrinks around it. The
+		   slower, delayed reveal-on-open timing lives on the
+		   .is-expanded rule below instead, since CSS transitions use
+		   whichever `transition` is declared on the rule the element is
+		   moving *toward*. */
+		transition: opacity 0.12s ease, transform 0.12s ease;
+	}
+	.build-cta-columns {
+		display: flex;
+		flex-direction: column;
+		gap: 32px;
+		width: 100%;
+		max-width: 1000px;
+		margin: 0 auto;
+	}
+	/* Two columns once the panel is wide enough for both to breathe --
+	   below that (and on mobile, where the panel is close to full-width
+	   anyway) it drops back to a single stacked column. */
+	@media (min-width: 700px) {
+		/* justify-content: center matters more now than when this was
+		   written -- the panel's since been sized down several rounds
+		   (targetRect()'s margin), so the intro+form row often no longer
+		   fills the panel's full width. Without this, flex's default
+		   (flex-start) packed both columns to the left with the leftover
+		   space sitting empty on the right, reading as "everything's off
+		   to the left" rather than a centered composition. */
+		.build-cta-columns { flex-direction: row; gap: 56px; justify-content: center; }
+		.build-cta-intro { flex: 0 1 340px; padding-top: 4px; }
+		.build-cta-form { flex: 1 1 360px; align-self: flex-start; }
+	}
+	.build-cta-card.is-expanded .build-cta-content {
+		opacity: 1;
+		transform: translateY(0);
+		transition: opacity 0.35s ease 0.22s, transform 0.35s ease 0.22s;
+	}
+	.build-cta-card.is-settled .build-cta-content { overflow-y: auto; }
+	.build-cta-intro { display: flex; flex-direction: column; gap: 18px; }
+	.build-cta-kicker {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		text-transform: uppercase;
+		letter-spacing: 2px;
+		font-size: 0.72rem;
+		color: var(--accent);
+		font-weight: 700;
+	}
+	.build-cta-kicker::before {
+		content: "";
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background: var(--accent);
+		box-shadow: 0 0 6px 1px rgba(59, 130, 246, 0.7);
+		animation: flicker-dot 2.9s steps(1) infinite;
+		flex-shrink: 0;
+	}
+	.build-cta-content h3 {
+		margin: 0;
+		font-family: var(--font-serif);
+		font-weight: 400;
+		font-size: clamp(1.8rem, 4vw, 2.75rem);
+		line-height: 1.1;
+		color: var(--ink);
+	}
+	/* Same shimmering gradient-text treatment as .hero h1 and the project
+	   case-study titles -- ties this heading directly to the page's own
+	   visual signature instead of just sharing its color tokens. */
+	@supports ((background-clip: text) or (-webkit-background-clip: text)) {
+		.build-cta-content h3 {
+			background: linear-gradient(100deg, var(--ink) 25%, var(--accent) 50%, var(--ink) 75%);
+			background-size: 220% auto;
+			-webkit-background-clip: text;
+			background-clip: text;
+			color: transparent;
+			animation: shimmer 7s ease-in-out infinite;
+		}
+	}
+	.build-cta-content p { margin: 0; color: var(--muted); font-size: 1rem; line-height: 1.65; max-width: 40ch; }
+
+	/* Contact form -- POSTs to Web3Forms (see script block below), a
+	   third-party relay chosen specifically because this box's portfolio
+	   container is plain nginx with no server-side code of its own to
+	   send mail from. No card chrome of its own (no bg/border on the
+	   form itself) -- the fields carry their own --surface-2 fill and
+	   the surrounding panel is already the one solid-color surface. */
+	.build-cta-form { display: flex; flex-direction: column; gap: 16px; max-width: 440px; }
+	.build-cta-honeypot { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+	.build-cta-field { display: flex; flex-direction: column; gap: 6px; }
+	.build-cta-field label {
+		font-family: "SFMono-Regular", Consolas, monospace;
+		font-size: 0.68rem;
+		letter-spacing: 0.6px;
+		text-transform: uppercase;
+		color: var(--muted);
+	}
+	.build-cta-field input,
+	.build-cta-field textarea {
+		font: inherit;
+		font-size: 0.95rem;
+		color: var(--ink);
+		background: var(--surface-2);
+		border: 1px solid var(--border);
+		border-radius: 8px;
+		padding: 10px 14px;
+		box-sizing: border-box;
+		resize: vertical;
+		transition: border-color 0.2s ease, box-shadow 0.2s ease;
+	}
+	.build-cta-field input::placeholder,
+	.build-cta-field textarea::placeholder { color: var(--muted); }
+	.build-cta-field input:focus,
+	.build-cta-field textarea:focus {
+		outline: none;
+		border-color: var(--accent);
+		box-shadow: 0 0 0 3px var(--accent-soft);
+	}
+	.build-cta-submit {
+		width: 100%;
+		margin-top: 4px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+		border-radius: 100px;
+		border: none;
+		background: var(--accent);
+		color: #06111f;
+		font-family: inherit; /* same reason as #buildCtaBtn above -- a real <button>, doesn't inherit the page font by default */
+		font-weight: 600;
+		padding: 12px 20px;
+		cursor: pointer;
+		transition: box-shadow 0.2s ease;
+	}
+	.build-cta-submit:hover { box-shadow: 0 10px 30px rgba(59, 130, 246, 0.45); }
+	.build-cta-submit .arrow { transition: transform 0.2s ease; }
+	.build-cta-submit:hover .arrow { transform: translateX(4px); }
+	.build-cta-submit:disabled { opacity: 0.6; cursor: default; }
+	.build-cta-submit:disabled .arrow { display: none; }
+	.build-cta-status { margin: 0; font-size: 0.88rem; min-height: 1.2em; color: var(--ink); }
+	.build-cta-status.is-error { color: #f87171; }
+	.build-cta-status.is-success { color: #4ade80; }
+
+	.build-cta-links { margin-top: auto; padding-top: 22px; display: flex; flex-direction: column; gap: 10px; }
+	.build-cta-links-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); }
+	.build-cta-alt-links { display: flex; gap: 20px; flex-wrap: wrap; }
+	.build-cta-alt-links a { color: var(--ink); font-size: 0.92rem; text-decoration: none; }
+	.build-cta-alt-links a:hover { color: var(--accent); }
+
+	@media (prefers-reduced-motion: reduce) {
+		html { scroll-behavior: auto; }
+		*, *::before, *::after {
+			transition: none !important;
+			animation: none !important;
+			scroll-behavior: auto !important;
+		}
+	}
+</style>
+</head>
+<body>
+
+<div class="boot-screen" id="boot-screen" aria-hidden="true">
+	<div class="boot-lines" id="boot-lines"></div>
+</div>
+
+<div class="ambient-bg" aria-hidden="true"></div>
+<canvas class="network-canvas" id="network-canvas" aria-hidden="true"></canvas>
+
+<div class="cursor-dot" aria-hidden="true"></div>
+<div class="cursor-ring" aria-hidden="true"><span>View</span></div>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<nav class="topnav" aria-label="Primary">
+	<div class="topnav-inner">
+		<div class="topnav-left">
+			<a class="brand" href="/">Kai Cryan</a>
+			<span class="status-pill"><span class="status-dot"></span><span>Junior Developer at Japan Secure Solutions<span class="blink-cursor" aria-hidden="true">_</span></span></span>
+		</div>
+		<div class="topnav-links">
+			<a href="#about">About</a>
+			<a href="#approach">Approach</a>
+			<a href="#process">Process</a>
+			<a href="#projects">Work</a>
+			<a href="#notes">Notes</a>
+			<a href="#contact">Contact</a>
+			<a class="magnetic" href="/assets/files/Kai-Cryan-Resume.pdf" target="_blank" rel="noopener">Resume</a>
+		</div>
+	</div>
+</nav>
+
+<main class="wrap" id="main">
+
+	<header class="hero">
+		<div class="hero-shader-wrap" id="hero-shader-wrap" aria-hidden="true"></div>
+		<div class="hero-inner">
+			<h1>Kai Cryan</h1>
+			<div class="eyebrow"><span id="eyebrow-text"></span><span class="eyebrow-cursor" id="eyebrow-cursor">_</span></div>
+			<div class="cta-row">
+				<a class="btn btn-primary magnetic" href="#projects">View work</a>
+				<a class="btn btn-secondary" href="#contact">Get in touch</a>
+			</div>
+		</div>
+	</header>
+
+	<div class="section-divider" aria-hidden="true"></div>
+
+	<section id="about">
+		<div class="section-head reveal"><span class="kicker">Who I am</span><h2>About</h2></div>
+		<div class="about-grid reveal">
+			<div class="about-bio">
+				<p>Penultimate-year <strong>Bachelor of Information Technology</strong> student at Macquarie University (Software Technology major), based in Sydney. I work as a Junior Developer at Japan Secure Solutions, and outside that I keep building things that actually run rather than just live in theory — this site, its case studies, and the server hosting all of it are part of that habit.</p>
+				<p>Day to day that's backend work in Go against PostgreSQL and Redis, freelance WordPress builds taken from spec through to launch, a home lab running my own DNS/DHCP and home automation, and daily algorithmic practice across Java and C++ — with C/C++ fundamentals the thing I'm actively learning right now.</p>
+			</div>
+			<div class="about-facts">
+				<div class="about-fact"><span class="about-fact-label">Studying</span><span class="about-fact-value">B.IT (Software Technology), Macquarie University</span></div>
+				<div class="about-fact"><span class="about-fact-label">Working</span><span class="about-fact-value">Junior Developer @ Japan Secure Solutions</span></div>
+				<div class="about-fact"><span class="about-fact-label">Based in</span><span class="about-fact-value">Sydney, Australia</span></div>
+				<div class="about-fact"><span class="about-fact-label">Currently learning</span><span class="about-fact-value">C/C++ fundamentals</span></div>
+			</div>
+		</div>
+		<div class="project-tags reveal">
+			<span class="project-tag">Go</span>
+			<span class="project-tag">JavaScript</span>
+			<span class="project-tag">Java</span>
+			<span class="project-tag">C++</span>
+			<span class="project-tag">PostgreSQL</span>
+			<span class="project-tag">Redis</span>
+			<span class="project-tag">Docker</span>
+			<span class="project-tag">Linux</span>
+			<span class="project-tag">Git</span>
+			<span class="project-tag">WordPress</span>
+			<span class="project-tag">Home Assistant</span>
+		</div>
+	</section>
+
+	<div class="section-divider alt" aria-hidden="true"></div>
+
+	<section id="approach">
+		<div class="section-head reveal"><span class="kicker">How I work</span><h2>Approach</h2></div>
+		<div class="approach-list">
+			<div class="approach-item reveal">
+				<div class="approach-num">01</div>
+				<div>
+					<h3>Learn by building</h3>
+					<p>Go, at work, by shipping backend services against Postgres and Redis. C, in a university systems course, through file-parsing labs and pointer bugs. Docker and networking, by replacing my home router with a self-hosted server that now runs its own DNS for the whole house. Different contexts, same habit — build the real thing, not the tutorial version.</p>
+				</div>
+			</div>
+			<div class="approach-item reveal">
+				<div class="approach-num">02</div>
+				<div>
+					<h3>Team habits and solo habits, both</h3>
+					<p>At work that means PR review, tickets, and Go services built inside someone else's existing architecture. At home it means a 20-sensor Zigbee automation system and a DNS server nobody's reviewing before it ships. Doing both keeps each one honest — one keeps me disciplined, the other keeps me able to just start.</p>
+				</div>
+			</div>
+			<div class="approach-item reveal">
+				<div class="approach-num">03</div>
+				<div>
+					<h3>Built through iteration</h3>
+					<p>CODE369 went from a written spec and a hand-drawn wireframe to a hybrid WordPress-and-Shopify build, then kept changing after it launched. Nothing on this site — including the site itself — shipped in one pass.</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<div class="section-divider alt" aria-hidden="true"></div>
+
+	<section id="process">
+		<div class="section-head reveal"><span class="kicker">The shape of it</span><h2>Process</h2></div>
+		<div class="process-timeline reveal">
+			<div class="process-step"><div class="process-dot" aria-hidden="true"></div><h3>Discovery</h3><p>A client's written spec and hand-drawn wireframe, or just an itch to replace another ISP router's defaults — figuring out what's actually worth building before committing to it.</p></div>
+			<div class="process-step"><div class="process-dot" aria-hidden="true"></div><h3>Build</h3><p>Design and development happen together, not as separate handoff stages.</p></div>
+			<div class="process-step"><div class="process-dot" aria-hidden="true"></div><h3>Launch</h3><p>Deployed to infrastructure I own and maintain — the same self-hosted server behind this site runs everything else I ship.</p></div>
+			<div class="process-step"><div class="process-dot" aria-hidden="true"></div><h3>Support</h3><p>CODE369 is still getting updates months after it first shipped, and the home server behind it never really stops needing attention either.</p></div>
+		</div>
+	</section>
+
+	<div class="section-divider" aria-hidden="true"></div>
+
+	<section id="projects">
+		<div class="section-head reveal"><span class="kicker">Selected</span><h2>Work</h2></div>
+
+		<div class="project-block reveal">
+			<div>
+				<div class="project-tags">
+					<span class="project-tag">WordPress</span>
+					<span class="project-tag">Shopify</span>
+					<span class="project-tag">Self-hosted</span>
+				</div>
+				<h3>CODE369</h3>
+				<p>A client-commissioned brand site spanning fashion, music, and digital tokens, built from a written spec and hand-drawn wireframe. I chose a hybrid WordPress + Shopify build — trading a fully custom storefront for faster, more reliable commerce — and self-hosted the entire stack. It went well enough to lead to a second freelance project.</p>
+				<a class="link magnetic" href="/projects/code369.html">Explore CODE369 <span class="arrow">→</span></a>
+			</div>
+			<div class="project-img-wrap"><img src="/assets/images/code369-screenshot.jpg?v=20260812" alt="CODE369 homepage screenshot"></div>
+		</div>
+
+		<div class="project-block reverse reveal">
+			<div>
+				<div class="project-tags">
+					<span class="project-tag">Docker</span>
+					<span class="project-tag">Networking</span>
+					<span class="project-tag">Home Automation</span>
+					<span class="project-tag">Self-hosted</span>
+				</div>
+				<h3>Home Lab</h3>
+				<p>Replaced a stock ISP router and third-party cloud apps with a self-built ZimaOS server. AdGuard Home took over DNS/DHCP, 20 Zigbee sensors close the loop on climate control by driving automated blinds, and photo storage moved off the cloud entirely. It's the same server hosting this site.</p>
+				<a class="link magnetic" href="/projects/home-lab.html">Explore the Home Lab <span class="arrow">→</span></a>
+			</div>
+			<div class="project-img-wrap"><img src="/assets/images/home-lab-ha-dashboard.jpg?v=20260812" alt="Home Assistant dashboard screenshot"></div>
+		</div>
+
+		<p class="more-projects-note">More projects will be added here as they launch.</p>
+	</section>
+
+	<div class="section-divider alt" aria-hidden="true"></div>
+
+	<section id="notes">
+		<div class="section-head reveal"><span class="kicker">Occasional writing</span><h2>Notes</h2></div>
+		<div class="notes-list">
+			<article class="note-item reveal">
+				<div class="note-meta"><span class="note-tag">Go</span><span class="note-date">Aug 2026</span></div>
+				<h3>Async work in Go: goroutines &amp; channels</h3>
+				<p>A slow network call inside a hot path can drag down the whole request if it runs synchronously. The fix: push the work onto a channel and return immediately, while a background goroutine started once at startup drains it and sends on its own schedule — paired with a blocking <code>Flush</code>/<code>Shutdown</code> at the end of the program's life so nothing queued gets silently dropped.</p>
+			</article>
+
+			<article class="note-item reveal">
+				<div class="note-meta"><span class="note-tag">Go</span><span class="note-date">Aug 2026</span></div>
+				<h3>Go, coming from Java: quirks worth knowing</h3>
+				<p>No exceptions — every fallible function returns <code>(result, error)</code>, so <code>if err != nil</code> is everywhere. <code>:=</code> infers a type and declares in one step, function-scope only. Every type has a zero value, so nothing is ever truly uninitialized. And <code>internal/</code> is enforced by the compiler, not a lint rule — outside code simply can't import it.</p>
+			</article>
+
+			<article class="note-item reveal">
+				<div class="note-meta"><span class="note-tag">CI/CD</span><span class="note-date">Aug 2026</span></div>
+				<h3>What actually happens in CI before code ships</h3>
+				<p>CI runs on every push — build, test, check quality — before a human looks at it. CD is the later, separate step that ships it. "Linting" is really layered checks (formatting, then bug-pattern detectors) that never run the code — that's what tests are for — and security scanning is a different question again: your own code for anti-patterns, or your dependencies' versions for known CVEs.</p>
+			</article>
+
+			<article class="note-item reveal">
+				<div class="note-meta"><span class="note-tag">Git</span><span class="note-date">Aug 2026</span></div>
+				<h3>A git workflow that keeps small teams sane</h3>
+				<p>One ticket, one branch, one PR, off an up-to-date main. Run whatever mirrors CI locally before opening the PR — find out in seconds, not in a queue. Push more commits to the same branch after review feedback instead of opening a new one. And stage deliberately: <code>git add &lt;file&gt;</code>, not <code>-A</code> out of habit.</p>
+			</article>
+
+			<article class="note-item reveal">
+				<div class="note-meta"><span class="note-tag">TypeScript</span><span class="note-date">Aug 2026</span></div>
+				<h3>TypeScript &amp; Expo: notes from a first React Native project</h3>
+				<p>Type annotations are checked at compile time and stripped before anything runs — what executes is plain JS. An <code>interface</code> is a compile-time-only contract, gone once the checker finishes. <code>unknown</code> is an honest placeholder for "exists, shape unconfirmed." And Expo hides most native-build complexity behind one command and a QR code, scanned with the Expo Go app.</p>
+			</article>
+
+			<article class="note-item reveal">
+				<div class="note-meta"><span class="note-tag">Tooling</span><span class="note-date">Aug 2026</span></div>
+				<h3>Two WSL gotchas that cost me an afternoon</h3>
+				<p>Both traced back to one root cause: a running terminal doesn't re-read its shell config after you edit it. An unquoted <code>PATH</code> export broke silently on an unescaped-parentheses Windows path, killing every new shell's startup — and a correctly-installed tool still came back "not found" in a terminal that had been open since before the fix.</p>
+			</article>
+		</div>
+	</section>
+
+	<div class="section-divider" aria-hidden="true"></div>
+
+	<section id="contact">
+		<div class="section-head reveal contact-head">
+			<div><span class="kicker">Say hello</span><h2>Get in touch</h2></div>
+			<button type="button" class="copy-btn" id="shareBtn">Share this page</button>
+		</div>
+		<div class="contact-links reveal">
+			<div class="contact-item">
+				<a class="contact-link" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=kaithecryan@gmail.com" target="_blank" rel="noopener">
+					<span class="contact-label">Email</span>
+					kaithecryan@gmail.com
+				</a>
+				<button type="button" class="copy-btn" data-copy="kaithecryan@gmail.com" aria-label="Copy email address">
+					<svg class="copy-check" width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12.5L9.5 18L20 6" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+					<span class="copy-btn-text">Copy</span>
+				</button>
+			</div>
+			<a class="contact-link" href="https://linkedin.com/in/kaicryan/" target="_blank" rel="noopener">
+				<span class="contact-label">LinkedIn</span>
+				linkedin.com/in/kaicryan
+			</a>
+			<a class="contact-link" href="https://github.com/KaiCryan" target="_blank" rel="noopener">
+				<span class="contact-label">GitHub</span>
+				github.com/KaiCryan
+			</a>
+		</div>
+
+		<div class="secondary-cta reveal">
+			<p>Have a project in mind?</p>
+			<button type="button" class="btn btn-primary magnetic" id="buildCtaBtn" aria-haspopup="dialog" aria-expanded="false" aria-controls="buildCtaCard">Let's build something</button>
+		</div>
+	</section>
+
+	<div class="section-divider alt" aria-hidden="true"></div>
+
+	<footer>
+		<div class="footer-row">
+			<div class="footer-col">
+				<p class="uptime-counter"><span class="status-dot"></span><span>Local time (Sydney): <span id="local-time-value">--:-- --</span></span></p>
+				<button type="button" class="footer-link-btn" id="backToTop">&uarr; Back to top</button>
+			</div>
+			<div class="footer-col footer-col-right">
+				<p>&copy; 2026 Kai Cryan<span class="blink-cursor" aria-hidden="true">_</span></p>
+				<button type="button" class="copy-btn" id="resetPageBtn">Reset this page</button>
+			</div>
+		</div>
+	</footer>
+
+</main>
+
+<!-- "Let's build something" fluid CTA expand: starts pinned to the
+     button's own on-screen rect (set by JS on click) and grows into a
+     centered panel, ported from a downloaded Framer Motion template into
+     this site's own vanilla CSS-transition approach. -->
+<div class="build-cta-overlay" id="buildCtaOverlay" hidden>
+	<div class="build-cta-card" id="buildCtaCard" role="dialog" aria-modal="true" aria-labelledby="buildCtaTitle">
+		<button type="button" class="build-cta-close" id="buildCtaClose" aria-label="Close">
+			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 5L19 19M19 5L5 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+		</button>
+		<div class="build-cta-content">
+		<div class="build-cta-columns">
+			<div class="build-cta-intro">
+				<span class="build-cta-kicker">Say hello</span>
+				<h3 id="buildCtaTitle">Let's build something</h3>
+				<p>Got a project, a home-lab idea, or just want to talk infrastructure? I read every message myself.</p>
+
+				<div class="build-cta-links">
+					<span class="build-cta-links-label">Reach me directly</span>
+					<div class="build-cta-alt-links">
+						<a class="magnetic" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=kaithecryan@gmail.com" target="_blank" rel="noopener">Email</a>
+						<a class="magnetic" href="https://linkedin.com/in/kaicryan/" target="_blank" rel="noopener">LinkedIn</a>
+						<a class="magnetic" href="https://github.com/KaiCryan" target="_blank" rel="noopener">GitHub</a>
+					</div>
+				</div>
+			</div>
+
+			<form class="build-cta-form" id="buildCtaForm" novalidate>
+				<input type="checkbox" name="botcheck" class="build-cta-honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
+				<div class="build-cta-field">
+					<label for="buildCtaName">Name</label>
+					<input type="text" id="buildCtaName" name="name" autocomplete="name" required>
+				</div>
+				<div class="build-cta-field">
+					<label for="buildCtaEmail">Your email</label>
+					<input type="email" id="buildCtaEmail" name="email" autocomplete="email" required>
+				</div>
+				<div class="build-cta-field">
+					<label for="buildCtaMessage">Message</label>
+					<textarea id="buildCtaMessage" name="message" rows="3" required></textarea>
+				</div>
+				<button type="submit" class="build-cta-submit" id="buildCtaSubmit">
+					<span id="buildCtaSubmitLabel">Send message</span>
+					<span class="arrow" aria-hidden="true">&rarr;</span>
+				</button>
+				<p class="build-cta-status" id="buildCtaStatus" role="status" aria-live="polite"></p>
+			</form>
+		</div>
+		</div>
+	</div>
+</div>
+
+<script>
+(function () {
+	"use strict";
+	// "Let's build something" fluid CTA expand. The reference template
+	// (a downloaded Next.js/React project) does this with Framer Motion's
+	// layoutId shared-element transition. This page has no React/build
+	// step, so rather than keep hand-rolling the same FLIP technique in
+	// raw CSS transitions -- which had two real bugs (an unlisted
+	// `visibility` property snapping instantly instead of animating, and
+	// a multi-duration `transitionend` firing on the wrong property) --
+	// this uses `animate()` from "motion", the vanilla-DOM build of the
+	// exact same animation engine the template's Framer Motion runs on.
+	// Its returned animation is a single promise that resolves once,
+	// when the whole thing actually finishes, which is the class of bug
+	// that kept recurring with hand-written CSS transitions.
+	var btn = document.getElementById("buildCtaBtn");
+	var overlay = document.getElementById("buildCtaOverlay");
+	var card = document.getElementById("buildCtaCard");
+	var closeBtn = document.getElementById("buildCtaClose");
+	if (!btn || !overlay || !card || !closeBtn) return;
+
+	var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	var isOpen = false;
+	var hoverTimer = null;
+	// Spring, not a fixed-duration easing curve -- Framer Motion's default
+	// `layout` transition (what the template's shared-element expand runs
+	// on) is a spring, and swapping in a plain cubic-bezier duration was
+	// part of why the motion read as noticeably different in character
+	// even after the FLIP mechanics themselves were correct.
+	var TRANSITION = { type: "spring", stiffness: 300, damping: 30 };
+
+	// Lazily imported and cached -- only fetched the first time the panel
+	// is actually opened, not on page load. Falls back to `null` (plain
+	// instant show/hide, no animated transition) if the CDN fetch fails,
+	// same defensive pattern the shader imports elsewhere on this page
+	// already use.
+	var animateFn = null;
+	var animateFailed = false;
+	function getAnimate() {
+		if (animateFn) return Promise.resolve(animateFn);
+		if (animateFailed) return Promise.resolve(null);
+		return import("https://esm.sh/motion@12.42.2")
+			.then(function (mod) {
+				animateFn = mod.animate;
+				return animateFn;
+			})
+			.catch(function (err) {
+				animateFailed = true;
+				console.warn("motion failed to load; CTA panel will open/close without an animated transition.", err);
+				return null;
+			});
+	}
+
+	function targetRect() {
+		var vw = window.innerWidth, vh = window.innerHeight;
+		// A bit smaller than fully edge-to-edge -- a larger flat margin
+		// than before leaves more of the backdrop/page visible around it
+		// instead of the panel spanning almost the entire viewport.
+		var margin = vw <= 640 ? 44 : 230;
+		var w = vw - margin * 2;
+		var h = vh - margin * 2;
+		return { top: margin, left: margin, width: w, height: h, radius: 24 };
+	}
+
+	function setRect(el, r) {
+		el.style.top = r.top + "px";
+		el.style.left = r.left + "px";
+		el.style.width = r.width + "px";
+		el.style.height = r.height + "px";
+		el.style.borderRadius = r.radius + "px";
+	}
+
+	function buttonRect() {
+		var r = btn.getBoundingClientRect();
+		var radius = parseFloat(getComputedStyle(btn).borderRadius) || 6;
+		return { top: r.top, left: r.left, width: r.width, height: r.height, radius: radius };
+	}
+
+	function onKeydown(e) {
+		if (e.key === "Escape") closeCta();
+	}
+
+	// openCta/closeCta are async + try/finally on purpose, not a .then()
+	// chain -- a real bug hit in an earlier round: if *anything* in the
+	// old chain threw or rejected (a CDN hiccup, an unexpected animate()
+	// error, anything), the final .then() that restores the real
+	// button's visibility and hides the overlay would just never run.
+	// The panel would visually shrink back down (the close animation
+	// itself still played), but the button underneath stayed
+	// visibility: hidden forever, with the now-stray card sitting
+	// exactly on top of it -- same size, same position, no click handler
+	// -- silently eating every subsequent click. finally guarantees the
+	// rect/opacity settle regardless of what happened in the try, and
+	// the actual visibility/overlay cleanup after it is now unconditional
+	// synchronous code with nothing left in its path that can throw.
+	async function openCta() {
+		if (isOpen) return;
+		if (hoverTimer) {
+			clearTimeout(hoverTimer);
+			hoverTimer = null;
+		}
+		isOpen = true;
+
+		var start = buttonRect();
+
+		// document.body.style.overflow needs to be set *before*
+		// targetRect() reads window.innerWidth, not after -- hiding the
+		// page's own vertical scrollbar changes how much of the window
+		// the browser treats as available, and measuring before that
+		// change meant the panel was being sized/positioned for a
+		// slightly different viewport state than the one it actually
+		// rendered into, which showed up as an off-center panel (margin
+		// on one side, none on the other) rather than a uniform error.
+		overlay.hidden = false;
+		overlay.classList.add("is-open");
+		card.classList.add("is-expanded"); // background/border/box-shadow + inner content fade, still plain CSS transitions -- nothing here blocks on their completion anymore
+		btn.style.visibility = "hidden";
+		document.body.style.overflow = "hidden";
+		btn.setAttribute("aria-expanded", "true");
+
+		var end = targetRect();
+
+		try {
+			var animate = await getAnimate();
+			if (animate && !reduceMotion) {
+				try {
+					await animate(card, {
+						top: [start.top + "px", end.top + "px"],
+						left: [start.left + "px", end.left + "px"],
+						width: [start.width + "px", end.width + "px"],
+						height: [start.height + "px", end.height + "px"],
+						borderRadius: [start.radius + "px", end.radius + "px"],
+						opacity: [0, 1],
+					}, TRANSITION);
+				} catch (err) { /* interrupted by a fast subsequent open/close -- fine */ }
+			}
+		} catch (err) {
+			console.warn("CTA open animation failed; showing panel without an animated transition.", err);
+		} finally {
+			setRect(card, end); // belt-and-braces: guarantees the final rect regardless of what happened above
+			card.style.opacity = "1";
+		}
+
+		if (!isOpen) return; // closed again before the open sequence settled
+		card.classList.add("is-settled"); // only now is it safe to let content scroll -- see .build-cta-content above
+		closeBtn.focus();
+		document.addEventListener("keydown", onKeydown);
+	}
+
+	async function closeCta() {
+		if (!isOpen) return;
+		isOpen = false;
+		document.removeEventListener("keydown", onKeydown);
+		card.classList.remove("is-settled"); // before anything else -- content must stop scrolling before the shrink starts, not after
+		card.classList.remove("is-expanded");
+		overlay.classList.remove("is-open");
+		btn.setAttribute("aria-expanded", "false");
+
+		var end = buttonRect();
+
+		try {
+			var animate = await getAnimate();
+			if (animate && !reduceMotion) {
+				// No explicit "from" -- animate() reads the card's current
+				// rendered position/size and interpolates from there, so
+				// this is correct even if the panel was mid-resize-reflow.
+				try {
+					await animate(card, {
+						top: end.top + "px",
+						left: end.left + "px",
+						width: end.width + "px",
+						height: end.height + "px",
+						borderRadius: end.radius + "px",
+					}, TRANSITION);
+				} catch (err) { /* interrupted by a fast subsequent open/close -- fine */ }
+			}
+		} catch (err) {
+			console.warn("CTA close animation failed; hiding panel without an animated transition.", err);
+		} finally {
+			setRect(card, end);
+		}
+
+		if (isOpen) return; // reopened before the close sequence settled
+		overlay.hidden = true;
+		card.style.opacity = "";
+		btn.style.visibility = "";
+		document.body.style.overflow = "";
+		btn.focus();
+	}
+
+	btn.addEventListener("click", openCta);
+	closeBtn.addEventListener("click", closeCta);
+	overlay.addEventListener("click", function (e) {
+		if (e.target === overlay) closeCta();
+	});
+
+	// targetRect() only ever runs at the moment the panel opens -- without
+	// this, shrinking the browser window *while it's already open* left
+	// the card at its old fixed pixel size with nothing to reflow it,
+	// so it could spill off-screen instead of shrinking with the window.
+	// This is a plain instant reposition (not an animate() call) --
+	// there's nothing to visually "transition" here, it's correcting an
+	// already-open panel to fit a viewport that just changed.
+	// rAF-throttled so a drag-resize doesn't fire setRect on every single
+	// resize event.
+	var resizePending = false;
+	window.addEventListener("resize", function () {
+		if (!isOpen || resizePending) return;
+		resizePending = true;
+		requestAnimationFrame(function () {
+			resizePending = false;
+			setRect(card, targetRect());
+		});
+	});
+
+	// Hover-and-hold: dwelling on the button opens the panel without a
+	// click. Gated to real hover-capable pointers (same check used by
+	// this page's other hover-only effects) so a tap on touch devices
+	// can't leave a "stuck" timer armed from lingering :hover state.
+	var canHoverOpen = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+	if (canHoverOpen) {
+		var HOVER_OPEN_DELAY = 700;
+		btn.addEventListener("mouseenter", function () {
+			if (isOpen) return;
+			hoverTimer = setTimeout(function () {
+				hoverTimer = null;
+				openCta();
+			}, HOVER_OPEN_DELAY);
+		});
+		btn.addEventListener("mouseleave", function () {
+			if (hoverTimer) {
+				clearTimeout(hoverTimer);
+				hoverTimer = null;
+			}
+		});
+	}
+})();
+</script>
+
+<script>
+(function () {
+	"use strict";
+	// "Let's build something" contact form -> Web3Forms
+	// (https://web3forms.com), a third-party relay: the portfolio
+	// container is plain nginx with no server-side code of its own to
+	// send mail from. The access key below is a routing key, not a
+	// secret -- Web3Forms is designed to have it embedded client-side
+	// like this, it only tells them which inbox to forward to.
+	var WEB3FORMS_ACCESS_KEY = "b66fbcd0-0b5c-4529-960c-7f9ac7ed975b";
+	var form = document.getElementById("buildCtaForm");
+	var status = document.getElementById("buildCtaStatus");
+	var submitBtn = document.getElementById("buildCtaSubmit");
+	var submitLabel = document.getElementById("buildCtaSubmitLabel");
+	if (!form || !status || !submitBtn || !submitLabel) return;
+
+	form.addEventListener("submit", function (e) {
+		e.preventDefault();
+		if (form.botcheck.checked) return; // honeypot tripped -- drop silently, don't tip the bot off
+
+		var name = form.name.value.trim();
+		var email = form.email.value.trim();
+		var message = form.message.value.trim();
+		if (!name || !email || !message) {
+			status.textContent = "Please fill in every field.";
+			status.className = "build-cta-status is-error";
+			return;
+		}
+
+		submitBtn.disabled = true;
+		submitLabel.textContent = "Sending…";
+		status.textContent = "";
+		status.className = "build-cta-status";
+
+		fetch("https://api.web3forms.com/submit", {
+			method: "POST",
+			headers: { "Content-Type": "application/json", Accept: "application/json" },
+			body: JSON.stringify({
+				access_key: WEB3FORMS_ACCESS_KEY,
+				subject: "New message from kaicryan.dev",
+				from_name: name,
+				name: name,
+				email: email,
+				message: message,
+			}),
+		})
+			.then(function (res) { return res.json(); })
+			.then(function (data) {
+				if (!data.success) throw new Error(data.message || "Send failed");
+				form.reset();
+				status.textContent = "Message sent — I'll get back to you soon.";
+				status.className = "build-cta-status is-success";
+			})
+			.catch(function () {
+				status.textContent = "Something went wrong — email me directly instead.";
+				status.className = "build-cta-status is-error";
+			})
+			.then(function () {
+				submitBtn.disabled = false;
+				submitLabel.textContent = "Send message";
+			});
+	});
+})();
+</script>
+
+<script>
+(function () {
+	"use strict";
+	var screen = document.getElementById("boot-screen");
+	if (!screen) return;
+
+	var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	var seen;
+	try { seen = sessionStorage.getItem("bootSeen"); } catch (e) { seen = null; }
+
+	if (reduceMotion || seen) {
+		screen.remove();
+		document.dispatchEvent(new Event("bootscreendone"));
+		return;
+	}
+	try { sessionStorage.setItem("bootSeen", "1"); } catch (e) {}
+
+	document.documentElement.style.overflow = "hidden";
+
+	var lines = [
+		"Booting kai-cryan.dev\u2026",
+		"[ OK ] Initializing network interfaces",
+		"[ OK ] Establishing signal",
+		"[ OK ] Starting infrastructure.service",
+		"[ OK ] All systems nominal",
+		"Welcome.",
+	];
+
+	var container = document.getElementById("boot-lines");
+	var lineIndex = 0;
+	var charIndex = 0;
+	var currentLineEl = null;
+	var charDelay = 10;
+	var linePause = 90;
+
+	function renderLine(el, typed, full) {
+		if (full.indexOf("[ OK ]") === 0 && typed.length >= 6) {
+			el.innerHTML = '<span class="ok">[ OK ]</span>' + typed.slice(6);
+		} else {
+			el.textContent = typed;
+		}
+	}
+
+	function typeChar() {
+		if (lineIndex >= lines.length) {
+			setTimeout(function () {
+				document.documentElement.style.overflow = "";
+				screen.addEventListener("animationend", function () {
+					screen.remove();
+					document.dispatchEvent(new Event("bootscreendone"));
+				}, { once: true });
+				screen.classList.add("boot-off");
+			}, 600);
+			return;
+		}
+
+		var fullLine = lines[lineIndex];
+		if (charIndex === 0) {
+			currentLineEl = document.createElement("div");
+			currentLineEl.className = "boot-line boot-line--active";
+			container.appendChild(currentLineEl);
+		}
+
+		charIndex++;
+		renderLine(currentLineEl, fullLine.slice(0, charIndex), fullLine);
+
+		if (charIndex < fullLine.length) {
+			setTimeout(typeChar, charDelay);
+		} else {
+			currentLineEl.classList.remove("boot-line--active");
+			lineIndex++;
+			charIndex = 0;
+			setTimeout(typeChar, linePause);
+		}
+	}
+	setTimeout(typeChar, 200);
+})();
+</script>
+
+<script>
+(function () {
+	"use strict";
+	var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	var coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+	if (reduceMotion || coarsePointer) return;
+
+	var strength = 0.25;
+	var maxOffset = 14;
+	document.querySelectorAll(".magnetic").forEach(function (el) {
+		el.addEventListener("mousemove", function (e) {
+			var r = el.getBoundingClientRect();
+			var dx = Math.max(-maxOffset, Math.min(maxOffset, (e.clientX - r.left - r.width / 2) * strength));
+			var dy = Math.max(-maxOffset, Math.min(maxOffset, (e.clientY - r.top - r.height / 2) * strength));
+			el.style.transform = "translate(" + dx + "px," + dy + "px)";
+		});
+		el.addEventListener("mouseleave", function () {
+			el.style.transform = "";
+		});
+	});
+})();
+</script>
+
+<script>
+(function () {
+	"use strict";
+	var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	if (reduceMotion || !("IntersectionObserver" in window)) return;
+
+	document.body.classList.add("js-reveal-ready");
+
+	// Letter-scramble/decode effect for section headers (h2) -- plays
+	// once, the first time each one scrolls into view. Ties into the
+	// "signal" conceit (reads like a transmission decoding in) and
+	// reuses this same observer rather than a second one.
+	var scrambleChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	function scrambleText(el) {
+		var finalText = el.textContent;
+		var duration = 1800;
+		var startTime = null;
+
+		function step(timestamp) {
+			if (startTime === null) startTime = timestamp;
+			var progress = Math.min((timestamp - startTime) / duration, 1);
+			var revealCount = Math.floor(progress * finalText.length);
+			var output = "";
+			for (var i = 0; i < finalText.length; i++) {
+				if (i < revealCount || finalText[i] === " ") {
+					output += finalText[i];
+				} else {
+					output += scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
+				}
+			}
+			el.textContent = output;
+			if (progress < 1) {
+				requestAnimationFrame(step);
+			} else {
+				el.textContent = finalText;
+			}
+		}
+		requestAnimationFrame(step);
+	}
+
+	var observer = new IntersectionObserver(function (entries) {
+		entries.forEach(function (entry) {
+			if (entry.isIntersecting) {
+				entry.target.classList.add("is-visible");
+				var heading = entry.target.querySelector("h2");
+				if (heading && !heading.dataset.scrambled) {
+					heading.dataset.scrambled = "true";
+					scrambleText(heading);
+				}
+			} else {
+				entry.target.classList.toggle("reveal-from-above", entry.boundingClientRect.top < 0);
+				entry.target.classList.remove("is-visible");
+			}
+		});
+	}, { threshold: 0.15, rootMargin: "0px 0px -10% 0px" });
+
+	document.querySelectorAll(".reveal").forEach(function (el) {
+		observer.observe(el);
+	});
+})();
+</script>
+
+<script>
+(function () {
+	"use strict";
+	var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	var canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+	if (reduceMotion || !canHover) return;
+
+	var dot = document.querySelector(".cursor-dot");
+	var ring = document.querySelector(".cursor-ring");
+	if (!dot || !ring) return;
+
+	var mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+	var ringEase = 0.18;
+	var started = false;
+
+	window.addEventListener("mousemove", function (e) {
+		mouseX = e.clientX;
+		mouseY = e.clientY;
+		dot.style.left = mouseX + "px";
+		dot.style.top = mouseY + "px";
+		if (!started) {
+			started = true;
+			ringX = mouseX;
+			ringY = mouseY;
+			document.body.classList.add("custom-cursor-active");
+		}
+	}, { passive: true });
+
+	function tick() {
+		ringX += (mouseX - ringX) * ringEase;
+		ringY += (mouseY - ringY) * ringEase;
+		ring.style.left = ringX + "px";
+		ring.style.top = ringY + "px";
+		requestAnimationFrame(tick);
+	}
+	requestAnimationFrame(tick);
+
+	document.querySelectorAll("a, button, .btn, .contact-link, input, textarea, [role='button']").forEach(function (el) {
+		el.addEventListener("mouseenter", function () { document.body.classList.add("cursor-hover"); });
+		el.addEventListener("mouseleave", function () { document.body.classList.remove("cursor-hover"); });
+	});
+
+	document.querySelectorAll(".project-block img").forEach(function (el) {
+		el.addEventListener("mouseenter", function () { document.body.classList.add("cursor-view"); });
+		el.addEventListener("mouseleave", function () { document.body.classList.remove("cursor-view"); });
+	});
+})();
+</script>
+
+<script>
+(function () {
+	"use strict";
+	var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	if (reduceMotion) return;
+
+	var canvas = document.getElementById("network-canvas");
+	if (!canvas || !canvas.getContext) return;
+	var ctx = canvas.getContext("2d");
+
+	var dpr = Math.min(window.devicePixelRatio || 1, 2);
+	var w, h, nodes;
+	var linkDist = 150;
+
+	// Cursor tendril: a line from the nearest node to the actual cursor
+	// position, hover-only (matches the other cursor-driven effects on
+	// this page -- custom cursor, magnetic buttons, image tilt).
+	var canHoverTendril = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+	var tendrilRadius = 220;
+	var mouseX = null, mouseY = null;
+	if (canHoverTendril) {
+		window.addEventListener("mousemove", function (e) {
+			mouseX = e.clientX;
+			mouseY = e.clientY;
+		}, { passive: true });
+		window.addEventListener("mouseout", function (e) {
+			if (!e.relatedTarget) { mouseX = null; mouseY = null; }
+		});
+	}
+
+	function resize() {
+		w = window.innerWidth;
+		h = window.innerHeight;
+		canvas.width = w * dpr;
+		canvas.height = h * dpr;
+		canvas.style.width = w + "px";
+		canvas.style.height = h + "px";
+		ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+	}
+
+	function makeNodes() {
+		var count = Math.round((w * h) / 22000);
+		count = Math.max(18, Math.min(count, 55));
+		nodes = [];
+		for (var i = 0; i < count; i++) {
+			nodes.push({
+				x: Math.random() * w,
+				y: Math.random() * h,
+				vx: (Math.random() - 0.5) * 0.18,
+				vy: (Math.random() - 0.5) * 0.18,
+			});
+		}
+	}
+
+	resize();
+	makeNodes();
+	window.addEventListener("resize", function () {
+		resize();
+		makeNodes();
+	});
+
+	function tick() {
+		ctx.clearRect(0, 0, w, h);
+
+		for (var i = 0; i < nodes.length; i++) {
+			var n = nodes[i];
+			n.x += n.vx;
+			n.y += n.vy;
+			if (n.x < 0 || n.x > w) n.vx *= -1;
+			if (n.y < 0 || n.y > h) n.vy *= -1;
+			n.x = Math.max(0, Math.min(w, n.x));
+			n.y = Math.max(0, Math.min(h, n.y));
+		}
+
+		for (var a = 0; a < nodes.length; a++) {
+			for (var b = a + 1; b < nodes.length; b++) {
+				var dx = nodes[a].x - nodes[b].x;
+				var dy = nodes[a].y - nodes[b].y;
+				var dist = Math.sqrt(dx * dx + dy * dy);
+				if (dist < linkDist) {
+					ctx.strokeStyle = "rgba(59, 130, 246, " + (0.16 * (1 - dist / linkDist)) + ")";
+					ctx.lineWidth = 1;
+					ctx.beginPath();
+					ctx.moveTo(nodes[a].x, nodes[a].y);
+					ctx.lineTo(nodes[b].x, nodes[b].y);
+					ctx.stroke();
+				}
+			}
+		}
+
+		// Find the nearest node to the cursor (if any is within range)
+		// before drawing nodes, so that node can be drawn brighter/larger
+		// below rather than needing a second pass.
+		var nearestNode = null, nearestDist = tendrilRadius;
+		if (mouseX !== null) {
+			for (var k = 0; k < nodes.length; k++) {
+				var ndx = nodes[k].x - mouseX, ndy = nodes[k].y - mouseY;
+				var ndist = Math.sqrt(ndx * ndx + ndy * ndy);
+				if (ndist < nearestDist) { nearestDist = ndist; nearestNode = nodes[k]; }
+			}
+		}
+
+		ctx.fillStyle = "rgba(147, 197, 253, 0.55)";
+		for (var j = 0; j < nodes.length; j++) {
+			if (nodes[j] === nearestNode) continue; // drawn separately, brighter, below
+			ctx.beginPath();
+			ctx.arc(nodes[j].x, nodes[j].y, 1.6, 0, Math.PI * 2);
+			ctx.fill();
+		}
+
+		if (nearestNode) {
+			var tendrilFade = 1 - nearestDist / tendrilRadius;
+			ctx.strokeStyle = "rgba(147, 197, 253, " + (tendrilFade * 0.5).toFixed(3) + ")";
+			ctx.lineWidth = 1;
+			ctx.beginPath();
+			ctx.moveTo(nearestNode.x, nearestNode.y);
+			ctx.lineTo(mouseX, mouseY);
+			ctx.stroke();
+
+			ctx.fillStyle = "rgba(147, 197, 253, " + (0.55 + tendrilFade * 0.45).toFixed(3) + ")";
+			ctx.beginPath();
+			ctx.arc(nearestNode.x, nearestNode.y, 1.6 + tendrilFade * 1.4, 0, Math.PI * 2);
+			ctx.fill();
+		}
+
+		requestAnimationFrame(tick);
+	}
+	requestAnimationFrame(tick);
+})();
+</script>
+
+<script>
+(function () {
+	"use strict";
+	var el = document.getElementById("local-time-value");
+	if (!el) return;
+
+	// 24-hour HH:MM:SS from Intl (timezone-aware, Sydney), with
+	// milliseconds appended directly from the Date object -- ms (and
+	// seconds, for that matter) don't shift with timezone offset, only
+	// hours/minutes do, so there's no need to run the ms part through
+	// Intl at all. Ticks on every animation frame for a genuinely live
+	// readout rather than a once-a-second snap.
+	var formatter = new Intl.DateTimeFormat("en-AU", {
+		timeZone: "Australia/Sydney",
+		hour: "2-digit",
+		minute: "2-digit",
+		second: "2-digit",
+		hour12: false,
+	});
+
+	function tick() {
+		var now = new Date();
+		var ms = String(now.getMilliseconds()).padStart(3, "0");
+		el.textContent = formatter.format(now) + "." + ms;
+		requestAnimationFrame(tick);
+	}
+	tick();
+})();
+</script>
+
+<script>
+(function () {
+	"use strict";
+	var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	var canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+	if (reduceMotion || !canHover) return;
+
+	// Targets .project-img-wrap now, not the inner <img> -- the same
+	// element both rotates and clips itself (border-radius/overflow:
+	// hidden live there too), so there's no separate flat frame around
+	// 3D content to look inconsistent. .tilting adds the elevated
+	// z-index + shadow from the CSS, so the card visibly sits above the
+	// rest of the page while hovered, not just tilts in place.
+	var maxTilt = 9;
+	document.querySelectorAll(".project-img-wrap").forEach(function (el) {
+		el.addEventListener("mouseenter", function () {
+			el.classList.add("tilting");
+		});
+		el.addEventListener("mousemove", function (e) {
+			var r = el.getBoundingClientRect();
+			var px = (e.clientX - r.left) / r.width - 0.5;
+			var py = (e.clientY - r.top) / r.height - 0.5;
+			el.style.transform = "perspective(900px) rotateY(" + (px * maxTilt * 2) + "deg) rotateX(" + (-py * maxTilt * 2) + "deg) scale(1.04)";
+		});
+		el.addEventListener("mouseleave", function () {
+			el.style.transform = "";
+			el.classList.remove("tilting");
+		});
+	});
+})();
+</script>
+
+<script>
+(function () {
+	"use strict";
+	// Terminal-style typing effect for the hero tagline -- the "signal
+	// coming online" feeling starts immediately on load, not just once
+	// you scroll into the decode-effect headers further down the page.
+	var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	var textEl = document.getElementById("eyebrow-text");
+	if (!textEl) return;
+
+	var finalText = "Web Development & Infrastructure";
+
+	function startTyping() {
+		if (reduceMotion) {
+			textEl.textContent = finalText;
+			return;
+		}
+		var i = 0;
+		function typeNext() {
+			if (i <= finalText.length) {
+				textEl.textContent = finalText.slice(0, i);
+				i++;
+				setTimeout(typeNext, 32);
+			}
+			// Cursor keeps blinking after typing finishes -- matches the
+			// same persistent "_" now used for the status pill and footer
+			// clock, rather than disappearing once typing completes.
+		}
+		typeNext();
+	}
+
+	if (document.getElementById("boot-screen")) {
+		document.addEventListener("bootscreendone", startTyping, { once: true });
+	} else {
+		startTyping();
+	}
+})();
+</script>
+
+<script>
+(function () {
+	"use strict";
+	// Copy-to-clipboard with a temporary checkmark-morph confirmation --
+	// scoped to [data-copy] specifically so it doesn't also try to run
+	// for the share/reset buttons below, which have their own
+	// handlers and no data-copy attribute.
+	document.querySelectorAll(".copy-btn[data-copy]").forEach(function (btn) {
+		var textEl = btn.querySelector(".copy-btn-text") || btn;
+		btn.addEventListener("click", function () {
+			var text = btn.getAttribute("data-copy");
+			if (!navigator.clipboard) return;
+			navigator.clipboard.writeText(text).then(function () {
+				var original = textEl.textContent;
+				textEl.textContent = "Copied";
+				btn.classList.add("copied");
+				setTimeout(function () {
+					textEl.textContent = original;
+					btn.classList.remove("copied");
+				}, 1800);
+			}).catch(function () { /* clipboard permission denied or unavailable -- the mailto link still works */ });
+		});
+	});
+
+	var shareBtn = document.getElementById("shareBtn");
+	if (shareBtn) {
+		shareBtn.addEventListener("click", function () {
+			if (navigator.share) {
+				navigator.share({ title: document.title, url: location.href }).catch(function () {});
+			} else if (navigator.clipboard) {
+				navigator.clipboard.writeText(location.href).then(function () {
+					var original = shareBtn.textContent;
+					shareBtn.textContent = "Link copied";
+					setTimeout(function () { shareBtn.textContent = original; }, 1800);
+				}).catch(function () {});
+			}
+		});
+	}
+
+	// Reset this page: clears the one piece of state this page writes
+	// (whether the boot screen has already played this session) and
+	// reloads, so the boot sequence plays again.
+	var resetBtn = document.getElementById("resetPageBtn");
+	if (resetBtn) {
+		resetBtn.addEventListener("click", function () {
+			try { sessionStorage.removeItem("bootSeen"); } catch (e) {}
+			location.reload();
+		});
+	}
+
+	// Back to top -- now a plain footer link rather than a scroll-triggered
+	// floating button, so it's just a click handler, no visibility toggle.
+	var backToTop = document.getElementById("backToTop");
+	if (backToTop) {
+		var reduceMotionTop = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+		backToTop.addEventListener("click", function () {
+			window.scrollTo({ top: 0, behavior: reduceMotionTop ? "auto" : "smooth" });
+		});
+	}
+})();
+</script>
+
+<script>
+(function () {
+	"use strict";
+	// Click/tap "ping" ripple on links and buttons -- valid on touch too
+	// (unlike the hover-only cursor/tilt/magnetic effects), since it's tap
+	// feedback, not a hover trick.
+	var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	if (reduceMotion) return;
+
+	document.addEventListener("click", function (e) {
+		var target = e.target.closest("a, button, .btn, [role='button']");
+		if (!target) return;
+		var ping = document.createElement("span");
+		ping.className = "click-ping";
+		ping.style.left = e.clientX + "px";
+		ping.style.top = e.clientY + "px";
+		document.body.appendChild(ping);
+		ping.addEventListener("animationend", function () { ping.remove(); });
+	}, { passive: true });
+})();
+</script>
+
+<script type="module">
+	// Shader gradient hero background, using @paper-design/shaders (the vanilla,
+	// framework-agnostic build of the component the user downloaded, which
+	// itself wraps this same package for React). Loaded defensively: if the
+	// CDN fetch is slow/blocked/fails, the hero just keeps its plain --bg
+	// color and nothing else on the page is affected (lesson learned from an
+	// earlier draft where a blocking `await import()` froze an entire page).
+	(async function mountHeroShader() {
+		const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+		const wrap = document.getElementById("hero-shader-wrap");
+		if (!wrap || reduceMotion) return;
+
+		let mod;
+		try {
+			mod = await import("https://cdn.jsdelivr.net/npm/@paper-design/shaders@0.0.77/dist/index.js");
+		} catch (err) {
+			console.warn("Shader gradient failed to load; hero keeps its plain background.", err);
+			return;
+		}
+
+		try {
+			const { ShaderMount, grainGradientFragmentShader, getShaderColorFromString } = mod;
+			const uniforms = {
+				// Was near-black (#0d0f12, same as the page's own --bg) -- with
+				// u_shape 4 ("corners") having 4 blob slots but only 3 real colors
+				// below, the 4th corner cycling through was fully transparent,
+				// which combined with this near-black backdrop made the hero read
+				// as "stuck on black" for a large chunk of every cycle. Now a dark
+				// blue instead of near-black, so even the emptiest moments still
+				// look like part of the gradient, not a blank/failed background.
+				u_colorBack: getShaderColorFromString("#070c16"),
+				// Reordering these (bright colors on the slow-dwelling
+				// index 0/3 "corners" extremes, dark tones in the faster
+				// middle) did shorten the dark phase, per the GLSL-level
+				// reasoning documented in SITE.md -- but the user said the
+				// animation's overall color/brightness/movement felt worse
+				// with that order and preferred reverting it even at the
+				// cost of the timing gain. Back to the original order (4th
+				// slot -- #0f1a2e, the deliberately dark color from two
+				// rounds ago -- sitting at index 3 again).
+				u_colors: [
+					getShaderColorFromString("#0d1b33"),
+					getShaderColorFromString("#3b82f6"),
+					getShaderColorFromString("#93c5fd"),
+					getShaderColorFromString("#0f1a2e"),
+					[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0],
+				],
+				u_colorsCount: 4,
+				// Was 0.76 -- lowered so color transitions snap between
+				// bright/dark more crisply instead of a long gradual
+				// fade. The overall rotation speed (5th ShaderMount arg,
+				// below) sets how fast the *whole* cycle runs, but doesn't
+				// change how much of that cycle is spent in the blurry
+				// in-between state versus clearly in one color or another
+				// -- less time in the ambiguous fade means the dark phase
+				// specifically reads as shorter, without re-speeding the
+				// bright phases the user's already happy with.
+				u_softness: 0.55,
+				// Was 0.6 (raised from 0.45 on 2026-07-22 specifically to
+				// keep color *more* pervasive across the whole canvas and
+				// fix a "stuck on black" look). That now works against
+				// getting a genuinely flat, grain-free dark phase back --
+				// user showed a reference image of this shader type where
+				// most of the frame sits at flat, speckle-free background
+				// color with grain only near active color blobs, not
+				// spread evenly. Lowered so there's real flat-background
+				// real estate for the dark 4th color slot (above) to
+				// actually read as flat and clean, not a blend of all 4
+				// corners' activity everywhere at once.
+				u_intensity: 0.3,
+				u_noise: 0,
+				u_shape: 4, // "corners"
+				u_offsetX: 0,
+				u_offsetY: 0,
+				u_scale: 2.2,
+				u_rotation: 0,
+				u_originX: 0.5,
+				u_originY: 0.5,
+				u_worldWidth: 0,
+				u_worldHeight: 0,
+				u_fit: 0,
+			};
+			// 5th arg is playback speed -- bumped from 1 to 1.6 (2026-07-22),
+			// then to 2, then to 2.3 (2026-07-25) so the reintroduced dark
+			// 4th color slot above passes by quickly rather than
+			// lingering, without needing to make that slot itself darker/
+			// more washed-out to compensate. 7th/8th args (minPixelRatio,
+			// maxPixelCount) cap the actual rendered resolution -- left
+			// unset, ShaderMount defaults to minPixelRatio: 2 (forces at
+			// *least* 2x pixel density regardless of the real display) and
+			// an ~8.3M-pixel budget (a 4K screen's worth), which is a
+			// meaningful, continuous GPU cost for a background effect
+			// that's running for the entire time the page is open, on
+			// every visit, regardless of the visitor's actual screen.
+			// 1 + a ~2M-pixel cap (roughly a 1080p budget) cuts the
+			// worst-case fragment-shader workload by up to ~4x; the grain
+			// gradient's soft blob edges don't need supersampling the way
+			// sharp geometry would, so this shouldn't be visually obvious.
+			new ShaderMount(wrap, grainGradientFragmentShader, uniforms, undefined, 2.3, undefined, 1, 1920 * 1080 * 2);
+		} catch (err) {
+			console.warn("Shader gradient failed to mount; hero keeps its plain background.", err);
+		}
+	})();
+</script>
+
+</body>
+</html>

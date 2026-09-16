@@ -1,0 +1,1881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code369 Website Development</title>
+<meta name="description" content="How I took CODE369 from a written spec and hand-drawn wireframe to a fully custom, self-hosted WordPress + Shopify brand site as sole freelance developer.">
+<meta property="og:title" content="Code369 Website Development">
+<meta property="og:description" content="A client-commissioned brand site spanning fashion, music, and digital tokens — hybrid WordPress + Shopify, self-hosted end to end.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://kaicryan.dev/projects/code369.html">
+<meta property="og:image" content="https://kaicryan.dev/assets/images/code369-screenshot.jpg?v=20260812">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Code369 Website Development">
+<meta name="twitter:description" content="A client-commissioned brand site spanning fashion, music, and digital tokens — hybrid WordPress + Shopify, self-hosted end to end.">
+<meta name="twitter:image" content="https://kaicryan.dev/assets/images/code369-screenshot.jpg?v=20260812">
+<link rel="icon" href="/assets/images/favicon.ico?v=20260812" sizes="any">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16.png?v=20260812">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32.png?v=20260812">
+<link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png?v=20260812">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+<script type="importmap">
+{
+	"imports": {
+		"three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+	}
+}
+</script>
+<style>
+	:root {
+		--bg: #08090b;
+		--surface: #15181d;
+		--border: #262b33;
+		--ink: #f2f1ee;
+		--muted: #9aa1ab;
+		--accent: #3b82f6;
+		--accent-soft: rgba(59, 130, 246, 0.14);
+		--font: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	}
+	* { box-sizing: border-box; }
+	html { scroll-behavior: smooth; overflow-x: hidden; }
+	body {
+		margin: 0;
+		overflow-wrap: break-word;
+		background-color: var(--bg);
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.09'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+		background-repeat: repeat;
+		color: var(--ink);
+		font-family: var(--font);
+		font-size: 16.5px;
+		line-height: 1.65;
+		-webkit-font-smoothing: antialiased;
+	}
+	p { color: var(--muted); }
+	a { color: var(--accent); }
+	code {
+		background: var(--accent-soft);
+		color: #93c5fd;
+		padding: 2px 6px;
+		border-radius: 4px;
+		font-size: 0.88em;
+	}
+
+	.skip-link {
+		position: absolute;
+		top: -48px;
+		left: 12px;
+		z-index: 100;
+		background: var(--accent);
+		color: #06111f;
+		padding: 10px 18px;
+		border-radius: 6px;
+		font-weight: 700;
+		font-size: 0.9rem;
+		text-decoration: none;
+		transition: top 0.15s ease;
+	}
+	.skip-link:focus { top: 12px; }
+	a:focus-visible, button:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 3px;
+		border-radius: 2px;
+	}
+
+	/* Thin scroll-progress bar, tracks how far through the case study you are */
+	.progress-bar {
+		position: fixed;
+		top: 0;
+		left: 0;
+		height: 3px;
+		width: 100%;
+		background: var(--accent);
+		transform-origin: 0 50%;
+		transform: scaleX(0);
+		z-index: 20;
+		animation: progress-fill linear both;
+		animation-timeline: scroll(root);
+	}
+	@keyframes progress-fill {
+		from { transform: scaleX(0); }
+		to { transform: scaleX(1); }
+	}
+
+	/* Ambient background: fixed to the viewport, spans full window width and
+	   stays visible the whole way down the page. */
+	.ambient-bg {
+		position: fixed;
+		inset: 0;
+		z-index: -2;
+		overflow: hidden;
+		pointer-events: none;
+	}
+	.ambient-bg::before,
+	.ambient-bg::after {
+		content: "";
+		position: absolute;
+		border-radius: 50%;
+		filter: blur(20px);
+	}
+	.ambient-bg::before {
+		top: -20vh;
+		right: -15vw;
+		width: max(55vw, 480px);
+		height: max(55vw, 480px);
+		background: radial-gradient(circle, rgba(59, 130, 246, 0.46) 0%, transparent 70%);
+		animation: glow-breathe-a 11s ease-in-out infinite;
+	}
+	.ambient-bg::after {
+		bottom: -25vh;
+		left: -18vw;
+		width: max(50vw, 440px);
+		height: max(50vw, 440px);
+		background: radial-gradient(circle, rgba(59, 130, 246, 0.36) 0%, transparent 70%);
+		animation: glow-breathe-b 14s ease-in-out infinite;
+	}
+	.network-canvas {
+		position: fixed;
+		inset: 0;
+		z-index: -1;
+		pointer-events: none;
+	}
+	/* Custom cursor: same as the homepage -- a small dot that tracks the
+	   mouse directly, plus a larger ring that trails behind it (JS-driven
+	   lerp easing). Expands and tints accent-blue over anything
+	   interactive; morphs into a solid "View" pill over the screenshot/
+	   gallery images. Desktop-only -- guarded here and in JS by
+	   (hover: hover) and (pointer: fine), so touch devices keep their
+	   native cursor untouched. */
+	@media (hover: hover) and (pointer: fine) {
+		body.custom-cursor-active,
+		body.custom-cursor-active a,
+		body.custom-cursor-active button,
+		body.custom-cursor-active input,
+		body.custom-cursor-active textarea,
+		body.custom-cursor-active [role="button"] {
+			cursor: none;
+		}
+		.cursor-dot, .cursor-ring {
+			position: fixed;
+			top: 0; left: 0;
+			pointer-events: none;
+			z-index: 9999;
+			border-radius: 50%;
+			opacity: 0;
+			transition: opacity 0.25s ease;
+		}
+		body.custom-cursor-active .cursor-dot,
+		body.custom-cursor-active .cursor-ring {
+			opacity: 1;
+		}
+		.cursor-dot {
+			width: 8px; height: 8px;
+			margin: -4px 0 0 -4px;
+			background: var(--accent);
+			box-shadow: 0 0 14px 3px rgba(59, 130, 246, 0.65);
+			transition: opacity 0.25s ease, transform 0.25s cubic-bezier(.16,1,.3,1);
+		}
+		.cursor-ring {
+			width: 38px; height: 38px;
+			margin: -19px 0 0 -19px;
+			border: 1.5px solid rgba(59, 130, 246, 0.55);
+			display: flex; align-items: center; justify-content: center;
+			transition: opacity 0.25s ease, width 0.35s cubic-bezier(.16,1,.3,1),
+				height 0.35s cubic-bezier(.16,1,.3,1), margin 0.35s cubic-bezier(.16,1,.3,1),
+				border-color 0.3s ease, background-color 0.3s ease;
+		}
+		.cursor-ring span {
+			opacity: 0;
+			font-size: 0.62rem;
+			letter-spacing: 1.5px;
+			text-transform: uppercase;
+			font-weight: 700;
+			color: #06111f;
+			transition: opacity 0.2s ease;
+		}
+		body.cursor-hover .cursor-dot { transform: scale(0); }
+		body.cursor-hover .cursor-ring {
+			width: 68px; height: 68px;
+			margin: -34px 0 0 -34px;
+			border-color: var(--accent);
+			background: rgba(59, 130, 246, 0.14);
+		}
+		body.cursor-view .cursor-ring {
+			width: 88px; height: 88px;
+			margin: -44px 0 0 -44px;
+			background: var(--accent);
+			border-color: var(--accent);
+		}
+		body.cursor-view .cursor-ring span { opacity: 1; }
+	}
+	@keyframes glow-breathe-a {
+		0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.65; }
+		50% { transform: translate(-60px, 50px) scale(1.4); opacity: 1; }
+	}
+	@keyframes glow-breathe-b {
+		0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.55; }
+		50% { transform: translate(50px, -40px) scale(1.35); opacity: 1; }
+	}
+
+	/* Top nav */
+	nav.topnav {
+		position: sticky;
+		top: 0;
+		z-index: 10;
+		background: rgba(13, 15, 18, 0.88);
+		backdrop-filter: blur(10px);
+		border-bottom: 1px solid var(--border);
+	}
+	.topnav-inner {
+		max-width: 880px;
+		margin: 0 auto;
+		padding: 20px 24px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+	}
+	.brand {
+		display: inline-block;
+		font-weight: 700;
+		font-size: 1.05rem;
+		letter-spacing: 0.2px;
+		color: var(--ink);
+		text-decoration: none;
+		transition: color 0.2s ease, transform 0.2s cubic-bezier(.16,1,.3,1);
+	}
+	.brand:hover { color: var(--accent); transform: scale(1.08); }
+	.topnav-links {
+		display: flex;
+		gap: 22px;
+		flex-wrap: wrap;
+	}
+	.topnav-links a {
+		font-size: 0.8rem;
+		font-weight: 500;
+		letter-spacing: 0.4px;
+		text-transform: uppercase;
+		color: var(--muted);
+		text-decoration: none;
+		transition: font-weight 0.25s ease, color 0.15s ease;
+	}
+	.topnav-links a:hover { color: var(--ink); font-weight: 700; }
+
+	.wrap {
+		max-width: 880px;
+		margin: 0 auto;
+		padding: 0 24px 120px;
+	}
+
+	/* Hero */
+	header.hero {
+		position: relative;
+		padding: 72px 0 64px;
+		border-bottom: 1px solid var(--border);
+	}
+	.eyebrow {
+		text-transform: uppercase;
+		letter-spacing: 2px;
+		font-size: 0.8rem;
+		color: var(--accent);
+		font-weight: 700;
+		margin-bottom: 18px;
+	}
+	h1 {
+		font-weight: 700;
+		font-size: clamp(2rem, 4.4vw, 2.9rem);
+		line-height: 1.25;
+		margin: 0 0 22px;
+		letter-spacing: -0.3px;
+	}
+	@supports ((background-clip: text) or (-webkit-background-clip: text)) {
+		h1 {
+			background: linear-gradient(100deg, var(--ink) 25%, var(--accent) 50%, var(--ink) 75%);
+			background-size: 220% auto;
+			-webkit-background-clip: text;
+			background-clip: text;
+			color: transparent;
+			animation: shimmer 7s ease-in-out infinite;
+		}
+	}
+	@keyframes shimmer {
+		0%, 100% { background-position: 200% center; }
+		50% { background-position: -20% center; }
+	}
+	.lede {
+		font-size: 1.14rem;
+		max-width: 62ch;
+		color: var(--muted);
+		line-height: 1.7;
+	}
+	.stat-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 40px;
+		margin-top: 40px;
+		padding-top: 32px;
+		border-top: 1px solid var(--border);
+	}
+	.stat .label {
+		text-transform: uppercase;
+		letter-spacing: 1px;
+		font-size: 0.72rem;
+		color: var(--muted);
+		font-weight: 600;
+		margin-bottom: 6px;
+	}
+	.stat .value {
+		font-size: 1.02rem;
+		font-weight: 600;
+	}
+	.stat .value a { color: var(--ink); text-decoration-color: var(--border); }
+	.cta-row {
+		margin-top: 32px;
+		display: flex;
+		gap: 12px;
+		flex-wrap: wrap;
+	}
+	.btn {
+		display: inline-block;
+		padding: 12px 24px;
+		border-radius: 6px;
+		text-decoration: none;
+		font-weight: 600;
+		font-size: 0.92rem;
+		letter-spacing: 0.2px;
+		position: relative;
+		overflow: hidden;
+		transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.3s ease, transform 0.25s cubic-bezier(.16,1,.3,1);
+	}
+	.btn::before {
+		content: ""; position: absolute; top: 0; bottom: 0; left: -60%; width: 40%;
+		background: linear-gradient(100deg, transparent, rgba(255,255,255,0.3), transparent);
+		transform: skewX(-18deg); transition: left 0.6s cubic-bezier(.16,1,.3,1); pointer-events: none;
+	}
+	.btn:hover::before { left: 130%; }
+	.btn-primary {
+		z-index: 0;
+		background: transparent;
+		border: 1.5px solid var(--accent);
+		color: var(--ink);
+	}
+	.btn-primary::before { display: none; }
+	.btn-primary::after {
+		content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit;
+		background: var(--accent); transform: scaleX(0); transform-origin: left;
+		transition: transform 0.7s cubic-bezier(.16,1,.3,1);
+	}
+	.btn-primary:hover { color: #06111f; box-shadow: 0 10px 30px rgba(59, 130, 246, 0.45); }
+	.btn-primary:hover::after { transform: scaleX(1); }
+	.btn-secondary { border: 1px solid var(--border); color: var(--ink); }
+	.btn-secondary:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(59, 130, 246, 0.25); }
+	.magnetic { display: inline-block; transition: transform 0.15s ease-out; }
+
+	.section-divider {
+		height: 70px;
+		width: 100vw;
+		margin-left: calc(50% - 50vw);
+		background: linear-gradient(115deg, transparent, var(--accent-soft), transparent);
+		clip-path: polygon(0 34%, 100% 0%, 100% 100%, 0% 100%);
+	}
+
+	/* Full-bleed image break — the one deliberate "break the grid" moment */
+	.bleed-img {
+		display: block;
+		width: 100vw;
+		margin-left: calc(50% - 50vw);
+		max-width: 100vw;
+		border-top: 1px solid var(--border);
+		border-bottom: 1px solid var(--border);
+	}
+	/* Homepage screenshot: kept within the normal content column instead
+	   of the full-bleed treatment above -- framed like the spec gallery
+	   images rather than breaking the grid.
+	   The `reveal` class lives on this image's *wrapper* div in the
+	   markup, not on the img itself -- same split the homepage uses
+	   (.project-block reveal > .project-img-wrap tilt). Both reveal and
+	   the tilt hover below animate `transform`, and a single element can
+	   only have one `transition` duration for a given property at a time
+	   (the browser just uses whichever CSS rule wins the cascade, it
+	   doesn't merge multiple rules' timing) -- so putting both on the
+	   same element meant the .reveal rule (same specificity, later in
+	   the stylesheet) silently ate this element's own tilt transition,
+	   making the entrance blur snap instead of animate. Splitting them
+	   across two elements like the homepage does removes the conflict
+	   entirely instead of trying to hand-tune one shared duration. */
+	.screenshot-img {
+		display: block;
+		position: relative;
+		width: 100%;
+		margin: 48px 0;
+		border-radius: 10px;
+		border: 1px solid var(--border);
+		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+		transition: box-shadow 0.3s ease, transform 0.15s ease-out, z-index 0s;
+	}
+	/* Same 3D cursor-tilt hover as the gallery thumbnails/homepage project
+	   previews -- no scan-sweep pseudo-element here since ::after/::before
+	   don't render on replaced elements like <img>, only the tilt+glow. */
+	.screenshot-img.tilting {
+		z-index: 30;
+		box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55), 0 0 50px rgba(59, 130, 246, 0.35);
+	}
+
+	/* Sections */
+	section {
+		position: relative;
+		padding: 64px 0;
+		border-bottom: 1px solid var(--border);
+		scroll-margin-top: 90px;
+	}
+	section:last-of-type { border-bottom: none; }
+	/* Giant faint section-number watermark — reuses the same number already
+	   shown in .section-num, just blown up as a quiet structural rhythm
+	   device rather than a one-off loud effect. */
+	section[data-num]::before {
+		content: attr(data-num);
+		position: absolute;
+		top: 12px;
+		right: 0;
+		z-index: -1;
+		font-size: clamp(5rem, 14vw, 11rem);
+		font-weight: 700;
+		line-height: 1;
+		color: transparent;
+		-webkit-text-stroke: 1px rgba(242, 241, 238, 0.055);
+		pointer-events: none;
+		user-select: none;
+	}
+	@media (max-width: 760px) {
+		section[data-num]::before { display: none; }
+	}
+	.section-head {
+		display: flex;
+		align-items: baseline;
+		gap: 14px;
+		margin-bottom: 24px;
+	}
+	.section-num {
+		font-size: 0.95rem;
+		color: var(--accent);
+		font-weight: 700;
+	}
+	h2 {
+		font-weight: 700;
+		font-size: 1.55rem;
+		margin: 0;
+		letter-spacing: -0.2px;
+	}
+	h3 { color: var(--ink); font-size: 1.02rem; margin: 0 0 8px; }
+
+	/* Boxless numbered item list — replaces bordered/background "card" grids */
+	.item-list { display: flex; flex-direction: column; gap: 26px; }
+	.item-row { display: flex; gap: 20px; align-items: flex-start; }
+	.item-num { font-size: 1.2rem; font-weight: 700; color: var(--accent); min-width: 30px; }
+	.item-row h3 { margin: 0 0 6px; }
+	.item-row p { margin: 0; font-size: 0.94rem; }
+
+	/* Original client spec gallery -- real photographed pages, not a mockup */
+	.spec-gallery { margin-top: 28px; }
+	.gallery-caption {
+		font-style: italic;
+		font-size: 0.88rem;
+		margin: 0 0 14px;
+	}
+	.gallery-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+		gap: 10px;
+	}
+	.gallery-grid button {
+		display: block;
+		position: relative;
+		width: 100%;
+		padding: 0;
+		background: none;
+		border-radius: 6px;
+		overflow: hidden;
+		border: 1px solid var(--border);
+		cursor: pointer;
+		transition: border-color 0.2s ease, box-shadow 0.3s ease, transform 0.15s ease-out, z-index 0s;
+	}
+	/* Flags the 5 pages that are genuine sequential wireframes for the
+	   site (client numbered them "Page 1"-"Page 5" in the corner of each
+	   sheet) vs the two supplementary sheets (a CTA close-up and a
+	   written feedback note) that sit in the same gallery but aren't
+	   part of that numbered sequence. */
+	.gallery-grid button[data-page]::after {
+		content: "Page " attr(data-page);
+		position: absolute;
+		top: 8px;
+		right: 8px;
+		z-index: 3;
+		padding: 3px 9px;
+		border-radius: 999px;
+		background: var(--accent);
+		color: #06111f;
+		font-size: 0.66rem;
+		font-weight: 700;
+		letter-spacing: 0.3px;
+		text-transform: uppercase;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+	}
+	/* 3D cursor-tilt hover -- same treatment as the homepage's project
+	   preview images (see the tilt script near the end of the page).
+	   .tilting adds the elevated z-index + glow while the mousemove
+	   handler drives the actual rotation via inline transform. */
+	.gallery-grid button.tilting {
+		z-index: 30;
+		box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55), 0 0 50px rgba(59, 130, 246, 0.35);
+	}
+	.gallery-grid button::before {
+		content: "";
+		position: absolute;
+		left: 0; right: 0;
+		height: 3px;
+		top: -5%;
+		background: linear-gradient(90deg, transparent, rgba(147, 197, 253, 0.9), transparent);
+		box-shadow: 0 0 14px 3px rgba(59, 130, 246, 0.65);
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.2s ease;
+		z-index: 2;
+	}
+	.gallery-grid button:hover::before {
+		opacity: 1;
+		animation: scan-sweep 1.4s linear infinite;
+	}
+	@keyframes scan-sweep {
+		0% { top: -5%; }
+		100% { top: 105%; }
+	}
+	.gallery-grid button:hover, .gallery-grid button:focus-visible {
+		border-color: var(--accent);
+		transform: translateY(-3px);
+	}
+	.gallery-grid img {
+		display: block;
+		width: 100%;
+		aspect-ratio: 3 / 4;
+		object-fit: cover;
+	}
+
+	/* Lightbox: in-page viewer for the spec gallery, with prev/next nav.
+	   Conceit is modern network/data transfer, not old-computer retro --
+	   a clean fade/scale entrance plus a thin top-of-frame load bar (the
+	   same visual language as a browser tab or app loading indicator, or
+	   this page's own scroll progress bar) standing in for "receiving
+	   data", rather than terminal text, CRT texture, or a glitch effect. */
+	.lightbox {
+		position: fixed;
+		inset: 0;
+		z-index: 50;
+		background: rgba(6, 7, 9, 0);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 60px 20px;
+	}
+	.lightbox[hidden] { display: none; }
+	.lightbox.is-open {
+		animation: lightbox-backdrop-in 0.3s ease-out both;
+	}
+	@keyframes lightbox-backdrop-in {
+		from { background: rgba(6, 7, 9, 0); }
+		to { background: rgba(6, 7, 9, 0.92); }
+	}
+	.lightbox.is-open .lightbox-frame {
+		animation: lightbox-frame-in 0.3s cubic-bezier(.16, 1, .3, 1) both;
+	}
+	@keyframes lightbox-frame-in {
+		0% { transform: scale(0.94); opacity: 0; }
+		100% { transform: scale(1); opacity: 1; }
+	}
+	.lightbox-frame {
+		position: relative;
+		display: inline-block;
+		max-width: min(900px, 90vw);
+		max-height: 82vh;
+		border-radius: 8px;
+		border: 1px solid var(--border);
+		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+		overflow: hidden;
+	}
+	.lightbox-loadbar {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 2px;
+		z-index: 5;
+		background: var(--accent);
+		transform: scaleX(0);
+		transform-origin: left;
+		opacity: 0;
+	}
+	.lightbox-loadbar.loading {
+		animation: lightbox-loadbar-fill 0.45s cubic-bezier(.16, 1, .3, 1) both;
+	}
+	.lightbox-loadbar.dir-prev { transform-origin: right; }
+	@keyframes lightbox-loadbar-fill {
+		0% { opacity: 1; transform: scaleX(0); }
+		70% { opacity: 1; transform: scaleX(1); }
+		100% { opacity: 0; transform: scaleX(1); }
+	}
+	.lightbox-img {
+		display: block;
+		max-width: min(900px, 90vw);
+		max-height: 82vh;
+		object-fit: contain;
+	}
+	/* The actual "sells the conceit" moment: the image resolves in from a
+	   grid of opaque blocks that clear at independent, randomized times --
+	   reads as packets of data arriving out of order and assembling into
+	   a complete picture, rather than a single uniform wipe/dissolve.
+	   This is also just real progressive-image-loading UX (the same
+	   pattern sites like Medium/Unsplash use), so it reads as genuinely
+	   "network", not an invented decoration. */
+	.lightbox-tiles {
+		position: absolute;
+		inset: 0;
+		z-index: 3;
+		display: grid;
+		grid-template-columns: repeat(8, 1fr);
+		grid-template-rows: repeat(6, 1fr);
+		pointer-events: none;
+	}
+	.lightbox-tile {
+		background: var(--bg);
+		opacity: 1;
+	}
+	.lightbox-tile.resolve {
+		animation: lightbox-tile-resolve 0.3s ease-out both;
+		animation-delay: var(--d, 0ms);
+	}
+	@keyframes lightbox-tile-resolve {
+		from { opacity: 1; }
+		to { opacity: 0; }
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.lightbox-tiles { display: none !important; }
+	}
+	/* WebGL layer: a progressive enhancement over the tile-reveal above.
+	   Hidden by default; JS only reveals it (and hides the CSS fallback
+	   underneath) once Three.js has actually initialized successfully --
+	   if the CDN script fails, WebGL is unavailable, or the user has
+	   reduced motion set, the frame simply never gains .gl-active and
+	   everything behaves exactly as it did without this layer. */
+	.lightbox-gl {
+		position: absolute;
+		inset: 0;
+		z-index: 4;
+		display: none;
+		width: 100%;
+		height: 100%;
+	}
+	.lightbox-frame.gl-active .lightbox-gl { display: block; }
+	.lightbox-frame.gl-active .lightbox-img { visibility: hidden; }
+	.lightbox-frame.gl-active .lightbox-tiles { display: none; }
+	/* The loadbar is deliberately NOT hidden in WebGL mode -- after the
+	   noise dissolve, particle burst, and network-graph animation were
+	   each tried and rejected as disconnected from "opening an image",
+	   this thin top-of-frame bar (already used, never complained about)
+	   is kept as the one restrained network touch, integrated into the
+	   crossfade itself rather than layered on top of it. */
+	.lightbox-btn {
+		position: fixed;
+		background: var(--surface);
+		border: 1px solid var(--border);
+		color: var(--ink);
+		border-radius: 999px;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: border-color 0.15s ease, color 0.15s ease,
+			transform 0.25s cubic-bezier(.34, 1.56, .64, 1),
+			box-shadow 0.25s ease;
+	}
+	.lightbox-btn:hover, .lightbox-btn:focus-visible {
+		border-color: var(--accent);
+		color: var(--accent);
+		box-shadow: 0 0 0 7px var(--accent-soft);
+	}
+	.lightbox-btn:active {
+		transition-duration: 0.1s;
+	}
+	.lightbox-close {
+		top: 20px;
+		right: 20px;
+		width: 42px;
+		height: 42px;
+		font-size: 1.3rem;
+	}
+	.lightbox-close:hover, .lightbox-close:focus-visible { transform: scale(1.12) rotate(90deg); }
+	.lightbox-close:active { transform: scale(0.9) rotate(90deg); }
+	.lightbox-prev, .lightbox-next {
+		top: 50%;
+		transform: translateY(-50%);
+		width: 52px;
+		height: 52px;
+		font-size: 1.6rem;
+	}
+	.lightbox-prev { left: 16px; }
+	.lightbox-next { right: 16px; }
+	.lightbox-prev:hover, .lightbox-prev:focus-visible { transform: translateY(-50%) scale(1.12) translateX(-3px); }
+	.lightbox-next:hover, .lightbox-next:focus-visible { transform: translateY(-50%) scale(1.12) translateX(3px); }
+	.lightbox-prev:active { transform: translateY(-50%) scale(0.92) translateX(-3px); }
+	.lightbox-next:active { transform: translateY(-50%) scale(0.92) translateX(3px); }
+	.lightbox-btn-icon {
+		display: inline-block;
+		transition: transform 0.25s cubic-bezier(.34, 1.56, .64, 1);
+	}
+	.lightbox-prev:hover .lightbox-btn-icon, .lightbox-prev:focus-visible .lightbox-btn-icon { transform: translateX(-2px); }
+	.lightbox-next:hover .lightbox-btn-icon, .lightbox-next:focus-visible .lightbox-btn-icon { transform: translateX(2px); }
+	.lightbox-counter {
+		position: fixed;
+		bottom: 22px;
+		left: 50%;
+		transform: translateX(-50%);
+		font-size: 0.82rem;
+		color: var(--muted);
+		letter-spacing: 0.4px;
+	}
+	.lightbox-caption {
+		position: fixed;
+		bottom: 46px;
+		left: 50%;
+		transform: translateX(-50%);
+		max-width: min(620px, 84vw);
+		text-align: center;
+		font-size: 0.86rem;
+		color: var(--ink);
+		line-height: 1.5;
+	}
+	.lightbox-caption .wireframe-badge {
+		display: inline-block;
+		margin-right: 8px;
+		padding: 2px 9px;
+		border-radius: 999px;
+		background: var(--accent-soft);
+		color: var(--accent);
+		font-size: 0.66rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.4px;
+		vertical-align: 1px;
+	}
+	@media (max-width: 640px) {
+		.lightbox-caption { bottom: 44px; font-size: 0.78rem; }
+		.lightbox-counter { bottom: 16px; }
+	}
+	@media (max-width: 640px) {
+		.lightbox-prev, .lightbox-next { width: 42px; height: 42px; font-size: 1.3rem; }
+		.lightbox-prev { left: 6px; }
+		.lightbox-next { right: 6px; }
+	}
+
+	table.tradeoff {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 0.92rem;
+		margin-top: 18px;
+	}
+	table.tradeoff th, table.tradeoff td {
+		text-align: left;
+		padding: 12px 4px;
+		border-bottom: 1px solid var(--border);
+		vertical-align: top;
+	}
+	table.tradeoff th {
+		color: var(--ink);
+		font-size: 0.75rem;
+		text-transform: uppercase;
+		letter-spacing: 0.6px;
+	}
+	table.tradeoff tr:last-child td { border-bottom: none; }
+
+	.decision-note, .tools-panel {
+		margin-top: 18px;
+		padding: 16px 20px;
+		border-left: 3px solid var(--accent);
+		background: var(--accent-soft);
+		font-size: 0.92rem;
+		border-radius: 0 4px 4px 0;
+		color: var(--ink);
+	}
+	.decision-note p, .tools-panel p { color: inherit; margin: 0; }
+	.decision-note strong { color: var(--accent); }
+	.tools-panel h3 { font-size: 0.95rem; margin: 20px 0 6px; color: var(--ink); }
+	.tools-panel h3:first-child { margin-top: 0; }
+	.tools-panel p { color: var(--muted); }
+	.tools-panel p strong { color: var(--ink); }
+
+	.pullquote {
+		font-size: 1.3rem;
+		font-weight: 500;
+		line-height: 1.5;
+		color: var(--ink);
+		border-left: 3px solid var(--accent);
+		padding-left: 24px;
+		margin: 0;
+	}
+	#outcomes .pullquote {
+		font-size: clamp(1.5rem, 3vw, 2rem);
+		line-height: 1.4;
+	}
+
+	.flow-steps {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 10px;
+		margin-top: 22px;
+	}
+	.flow-step {
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: 8px;
+		padding: 14px 18px;
+		font-size: 0.88rem;
+		font-weight: 600;
+		color: var(--ink);
+	}
+	.flow-arrow { color: var(--accent); font-size: 1.1rem; }
+
+	.skills {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+	}
+	.skill {
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: 999px;
+		padding: 7px 16px;
+		font-size: 0.85rem;
+		color: var(--ink);
+		font-weight: 500;
+	}
+
+	footer {
+		padding: 50px 0 60px;
+		color: var(--muted);
+		font-size: 0.85rem;
+		border-top: 1px solid var(--border);
+	}
+	footer a { color: var(--accent); }
+	.footer-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; flex-wrap: wrap; }
+	.footer-col { display: flex; flex-direction: column; gap: 12px; }
+	.footer-col-right { align-items: flex-end; text-align: right; }
+	.footer-col p { margin: 0; }
+	.footer-link-btn {
+		font-family: inherit; font-size: 0.78rem; color: var(--muted); background: none; border: none;
+		padding: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+		transition: color 0.2s ease;
+	}
+	.footer-link-btn:hover { color: var(--accent); }
+	@media (max-width: 600px) {
+		.footer-row { flex-direction: column; }
+		.footer-col-right { align-items: flex-start; text-align: left; }
+	}
+	.uptime-counter {
+		margin-top: 10px;
+		display: flex;
+		align-items: center;
+		gap: 7px;
+		font-family: "SFMono-Regular", Consolas, monospace;
+		font-size: 0.72rem;
+		color: var(--muted);
+		opacity: 0.8;
+	}
+	.status-dot {
+		display: inline-block;
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: #22c55e;
+		box-shadow: 0 0 8px 2px rgba(34, 197, 94, 0.6);
+		animation: flicker-dot 2.6s steps(1) infinite;
+		flex-shrink: 0;
+	}
+	@keyframes flicker-dot {
+		0%, 100% { opacity: 1; }
+		4% { opacity: 0.25; }
+		8% { opacity: 1; }
+		12% { opacity: 1; }
+		16% { opacity: 0.15; }
+		20% { opacity: 1; }
+		44% { opacity: 1; }
+		47% { opacity: 0.35; }
+		50% { opacity: 1; }
+		74% { opacity: 1; }
+		77% { opacity: 0.2; }
+		81% { opacity: 1; }
+		90% { opacity: 1; }
+		92% { opacity: 0.5; }
+		94% { opacity: 1; }
+	}
+	.blink-cursor {
+		display: inline-block;
+		color: var(--accent);
+		animation: blink-cursor 1s step-end infinite;
+	}
+	@keyframes blink-cursor {
+		0%, 100% { opacity: 1; }
+		50% { opacity: 0; }
+	}
+
+	/* Scroll reveal: real time-based transition (not scroll-linked), toggled
+	   by JS (IntersectionObserver) adding/removing .is-visible. Gated behind
+	   body.js-reveal-ready (added by that same script) so if JS never runs,
+	   .reveal elements simply render normally visible -- no permanently-
+	   invisible content as a failure mode. Matches the homepage's reveal
+	   system exactly (replaces the old native-CSS animation-timeline
+	   version, which faded content back OUT again once scrolled past --
+	   not ideal for a long-form case study read top to bottom). */
+	.reveal {
+		transition: opacity 0.9s cubic-bezier(.16,1,.3,1), transform 0.9s cubic-bezier(.16,1,.3,1), filter 0.9s cubic-bezier(.16,1,.3,1);
+	}
+	body.js-reveal-ready .reveal {
+		opacity: 0;
+		transform: translateY(90px) scale(0.9);
+		filter: blur(36px);
+	}
+	body.js-reveal-ready .reveal.reveal-from-above {
+		transform: translateY(-90px) scale(0.9);
+	}
+	body.js-reveal-ready .reveal.is-visible {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+		filter: blur(0);
+	}
+
+	@media (max-width: 640px) {
+		.topnav-links { display: none; }
+	}
+	@media (prefers-reduced-motion: reduce) {
+		html { scroll-behavior: auto; }
+		*, *::before, *::after {
+			transition: none !important;
+			animation: none !important;
+			scroll-behavior: auto !important;
+		}
+	}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" aria-hidden="true"></div>
+<div class="ambient-bg" aria-hidden="true"></div>
+<canvas class="network-canvas" id="network-canvas" aria-hidden="true"></canvas>
+
+<div class="cursor-dot" aria-hidden="true"></div>
+<div class="cursor-ring" aria-hidden="true"><span>View</span></div>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<nav class="topnav" aria-label="Primary">
+	<div class="topnav-inner">
+		<a class="brand" href="/">← Kai Cryan</a>
+		<div class="topnav-links">
+			<a href="#skills">Skills</a>
+			<a href="#brief">Brief</a>
+			<a href="#design">Design</a>
+			<a href="#architecture">Architecture</a>
+			<a href="#tools">Approach</a>
+			<a href="#outcomes">Outcomes</a>
+			<a class="magnetic" href="/assets/files/Kai-Cryan-Resume.pdf" target="_blank" rel="noopener">Resume</a>
+		</div>
+	</div>
+</nav>
+
+<main class="wrap" id="main">
+
+	<header class="hero">
+		<div class="reveal"><img class="screenshot-img" src="/assets/images/code369-screenshot.jpg?v=20260812" alt="CODE369 live homepage screenshot"></div>
+		<div class="eyebrow">Case Study — Freelance Web Development</div>
+		<h1>Code369 Website Development</h1>
+		<p class="lede">
+			CODE369 engaged me to build a website spanning fashion, music, and digital
+			tokens/NFTs, starting from a written specification and a hand-drawn
+			wireframe. I worked as the sole developer, iterating directly with the
+			client throughout, and delivered a fully custom WordPress site with
+			e-commerce handled through a Shopify integration.
+		</p>
+		<div class="cta-row">
+			<a class="btn btn-primary magnetic" href="https://369keys.com" target="_blank" rel="noopener">View the live site →</a>
+			<a class="btn btn-secondary" href="#brief">Read the case study</a>
+		</div>
+		<div class="stat-row">
+			<div class="stat">
+				<div class="label">Role</div>
+				<div class="value">Freelance web developer (sole developer)</div>
+			</div>
+			<div class="stat">
+				<div class="label">Timeline</div>
+				<div class="value">April/May 2026 — Present</div>
+			</div>
+			<div class="stat">
+				<div class="label">Live site</div>
+				<div class="value"><a href="https://369keys.com" target="_blank" rel="noopener">369keys.com</a></div>
+			</div>
+		</div>
+	</header>
+
+	<div class="section-divider" aria-hidden="true"></div>
+
+	<section id="skills" data-num="01">
+		<div class="section-head reveal"><span class="section-num">01</span><h2>Skills demonstrated</h2></div>
+		<div class="skills">
+			<span class="skill">Requirements gathering &amp; scoping ambiguous briefs</span>
+			<span class="skill">Platform/technology trade-off evaluation</span>
+			<span class="skill">UI/visual design &amp; brand identity</span>
+			<span class="skill">Product thinking (target market, CTA strategy)</span>
+			<span class="skill">Docker &amp; self-hosting</span>
+			<span class="skill">Tailscale VPN</span>
+			<span class="skill">WSL2 / SSHFS</span>
+			<span class="skill">Client management &amp; expectation-setting</span>
+		</div>
+	</section>
+
+	<section id="brief" data-num="02">
+		<div class="section-head reveal"><span class="section-num">02</span><h2>The brief</h2></div>
+		<p>
+			The client came to me with a written project specification and a
+			hand-drawn wireframe, and asked me to bring that vision to life as a
+			fully functioning site — with room to modernise and elevate the design
+			creatively rather than build a literal, unadorned translation of the
+			wireframe.
+		</p>
+		<div class="spec-gallery reveal">
+			<p class="gallery-caption">The client's original wireframes — numbered and hand-drawn page by page before any design work began — plus notes exchanged along the way. Click any page to view it full-size.</p>
+			<div class="gallery-grid" id="specGallery">
+				<button type="button" data-page="1" data-full="/assets/images/code369-spec/spec-page-1.jpg" data-alt="Wireframe — Page 1: homepage hero. Headline &quot;369 — Your Key To The Universe&quot;, the Energy/Vibration/Frequency 3-6-9 definitions, and the fashion/music/tokens/NFTs tagline."><img loading="lazy" src="/assets/images/code369-spec/spec-page-1.jpg" alt="Wireframe — Page 1: homepage hero. Headline '369 — Your Key To The Universe', the Energy/Vibration/Frequency 3-6-9 definitions, and the fashion/music/tokens/NFTs tagline."></button>
+				<button type="button" data-page="2" data-full="/assets/images/code369-spec/spec-page-2.jpg" data-alt="Wireframe — Page 2: tees catalog page. A grid layout for the CODE369 tee catalog, with copy about 30 years in the fashion industry."><img loading="lazy" src="/assets/images/code369-spec/spec-page-2.jpg" alt="Wireframe — Page 2: tees catalog page. A grid layout for the CODE369 tee catalog, with copy about 30 years in the fashion industry."></button>
+				<button type="button" data-page="3" data-full="/assets/images/code369-spec/spec-page-3.jpg" data-alt="Wireframe — Page 3: 369 Key token page, describing the token whitepaper and its Alcore/XPR exchange listing."><img loading="lazy" src="/assets/images/code369-spec/spec-page-3.jpg" alt="Wireframe — Page 3: 369 Key token page, describing the token whitepaper and its Alcore/XPR exchange listing."></button>
+				<button type="button" data-page="4" data-full="/assets/images/code369-spec/spec-page-4.jpg" data-alt="Wireframe — Page 4: Lucky Moon NFTs page, with a moon-photo placeholder, a grid for individual NFT images, and purchase copy."><img loading="lazy" src="/assets/images/code369-spec/spec-page-4.jpg" alt="Wireframe — Page 4: Lucky Moon NFTs page, with a moon-photo placeholder, a grid for individual NFT images, and purchase copy."></button>
+				<button type="button" data-page="5" data-full="/assets/images/code369-spec/spec-page-5.jpg" data-alt="Wireframe — Page 5: Venus Baby Hits page, a nostalgia-themed 60s-80s music offering."><img loading="lazy" src="/assets/images/code369-spec/spec-page-5.jpg" alt="Wireframe — Page 5: Venus Baby Hits page, a nostalgia-themed 60s-80s music offering."></button>
+				<button type="button" data-full="/assets/images/code369-spec/spec-page-6.jpg" data-alt="Close-up detail from the wireframes: the &quot;Shop the Collection&quot; / &quot;Visit Shop Now&quot; call-to-action buttons."><img loading="lazy" src="/assets/images/code369-spec/spec-page-6.jpg" alt="Close-up detail from the wireframes: the 'Shop the Collection' / 'Visit Shop Now' call-to-action buttons."></button>
+				<button type="button" data-full="/assets/images/code369-spec/spec-page-7.jpg" data-alt="The client's own handwritten feedback note on the Lucky Moon NFT visual direction."><img loading="lazy" src="/assets/images/code369-spec/spec-page-7.jpg" alt="The client's own handwritten feedback note on the Lucky Moon NFT visual direction."></button>
+			</div>
+		</div>
+	</section>
+
+	<section id="process" data-num="03">
+		<div class="section-head reveal"><span class="section-num">03</span><h2>Process &amp; collaboration</h2></div>
+		<p>
+			This wasn't a one-shot handoff. I worked directly and iteratively with
+			the client throughout the build to keep the design aligned with their
+			vision, while introducing modern design ideas without overriding what
+			they actually wanted. Where parts of their vision weren't practical to
+			build as described, I assessed the feasibility myself and communicated
+			that back clearly — so the client understood what was actually possible
+			rather than having ideas silently reinterpreted or dropped — and used
+			that shared understanding to build the best achievable version of the
+			product.
+		</p>
+		<div class="flow-steps reveal">
+			<div class="flow-step">Written spec + wireframe</div>
+			<span class="flow-arrow">→</span>
+			<div class="flow-step">Iterative build with client</div>
+			<span class="flow-arrow">→</span>
+			<div class="flow-step">Feasibility assessed &amp; communicated</div>
+			<span class="flow-arrow">→</span>
+			<div class="flow-step">Live, fully custom site</div>
+		</div>
+	</section>
+
+	<section id="design" data-num="04">
+		<div class="section-head reveal"><span class="section-num">04</span><h2>Design &amp; product decisions</h2></div>
+		<p>
+			I owned the site's entire visual language end to end — layout,
+			typography, animation, and the underlying design principles —
+			translating the client's written spec and hand-drawn wireframe into a
+			cohesive brand identity (Michroma/Audiowide for display type, paired
+			with Space Grotesk) built specifically around their fashion/music/tokens
+			positioning, not a generic template. That included designing the hero
+			treatment and shaping the CTAs to actually catch the eye and convert,
+			not just look good.
+		</p>
+		<div class="item-list reveal">
+			<div class="item-row">
+				<div class="item-num">01</div>
+				<div>
+					<h3>Nebula/starfield hero</h3>
+					<p>An animated star-field hero section establishing the brand's cosmic/numerology visual identity from the first scroll.</p>
+				</div>
+			</div>
+			<div class="item-row">
+				<div class="item-num">02</div>
+				<div>
+					<h3>Wave-based video background</h3>
+					<p>A looping video background used to add motion and depth to a key homepage section.</p>
+				</div>
+			</div>
+			<div class="item-row">
+				<div class="item-num">03</div>
+				<div>
+					<h3>Moon/orbit canvas overlay</h3>
+					<p>A canvas-based overlay animation reinforcing the moon/orbit theme running through the brand.</p>
+				</div>
+			</div>
+			<div class="item-row">
+				<div class="item-num">04</div>
+				<div>
+					<h3>Lucky Moon NFTs collection page</h3>
+					<p>A dedicated collection page built specifically to present the client's NFT offering.</p>
+				</div>
+			</div>
+			<div class="item-row">
+				<div class="item-num">05</div>
+				<div>
+					<h3>Eye-catching, target-market-informed CTAs</h3>
+					<p>Defined the site's target market up front and used it to deliberately place calls-to-action, rather than defaulting to generic placement.</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section id="architecture" data-num="05">
+		<div class="section-head reveal"><span class="section-num">05</span><h2>Technical architecture</h2></div>
+		<p>Evaluated Shopify against a self-hosted WordPress build before deciding on an approach:</p>
+		<table class="tradeoff reveal">
+			<tr>
+				<th>Option</th>
+				<th>Trade-off</th>
+			</tr>
+			<tr>
+				<td>Shopify</td>
+				<td>Strong out-of-the-box e-commerce, but less flexible for the fully custom design the client wanted.</td>
+			</tr>
+			<tr>
+				<td>Self-hosted WordPress</td>
+				<td>Full design flexibility via Full Site Editing, but no native e-commerce.</td>
+			</tr>
+		</table>
+		<div class="decision-note">
+			<p><strong>Decision:</strong> a hybrid approach — WordPress (Full Site Editing,
+			Loudness theme as a base) for the fully custom design and content, with
+			Shopify Buy Button embeds handling e-commerce/checkout
+			specifically. This fit the client's budget and technical needs better
+			than committing fully to either platform.</p>
+		</div>
+	</section>
+
+	<section id="infrastructure" data-num="06">
+		<div class="section-head reveal"><span class="section-num">06</span><h2>Infrastructure</h2></div>
+		<div class="item-list reveal">
+			<div class="item-row">
+				<div class="item-num">01</div>
+				<div>
+					<h3>Built &amp; run the home server myself</h3>
+					<p>Set up and maintain the physical home server (ZimaOS, Docker-based) that hosts the WordPress instance, so the client could review the live site at any time rather than waiting on a hosted staging environment.</p>
+				</div>
+			</div>
+			<div class="item-row">
+				<div class="item-num">02</div>
+				<div>
+					<h3>Cloudflare Tunnel &amp; domain routing</h3>
+					<p>Routed the home server through a Cloudflare Tunnel and pointed the 369keys.com domain at it, so the client's site is reachable on a real public domain rather than a bare IP address.</p>
+				</div>
+			</div>
+			<div class="item-row">
+				<div class="item-num">03</div>
+				<div>
+					<h3>Direct-to-production deploys</h3>
+					<p>Every change goes straight onto the live site the client already has bookmarked, no separate staging environment or deploy step, so they always see the latest work immediately.</p>
+				</div>
+			</div>
+			<div class="item-row">
+				<div class="item-num">04</div>
+				<div>
+					<h3>Remote access via Tailscale</h3>
+					<p>Configured a Tailscale VPN so the site could be reviewed and worked on securely from outside the home network.</p>
+				</div>
+			</div>
+			<div class="item-row">
+				<div class="item-num">05</div>
+				<div>
+					<h3>Dynamic URL handling</h3>
+					<p>Resolved <code>wp-config.php</code> configuration so the site behaved correctly whether accessed locally or remotely.</p>
+				</div>
+			</div>
+			<div class="item-row">
+				<div class="item-num">06</div>
+				<div>
+					<h3>WSL2 / SSHFS mounting</h3>
+					<p>Mounted the WordPress files via WSL2/SSHFS so the codebase could be accessed and edited directly during development.</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section id="tools" data-num="07">
+		<div class="section-head reveal"><span class="section-num">07</span><h2>Tools &amp; development approach</h2></div>
+		<p>Built on WordPress with the native block editor (Gutenberg). Custom JavaScript powers the site's animated/interactive elements (starfield hero, canvas overlays, video background), with PHP handling the WordPress theme templating underneath.</p>
+		<div class="tools-panel">
+			<p>
+				This was a solo project end to end: design, development,
+				infrastructure, hosting, and client communication were all my own
+				work, from the first conversation about the brief through to the
+				site going live and every update since.
+			</p>
+		</div>
+	</section>
+
+	<section id="outcomes" data-num="08">
+		<div class="section-head reveal"><span class="section-num">08</span><h2>Outcomes</h2></div>
+		<p class="pullquote reveal">
+			"The client was very happy with the result and felt it exceeded
+			expectations." As a direct result, I was engaged for a second project —
+			a website for the client's wife.
+		</p>
+	</section>
+
+	<footer>
+		<div class="footer-row">
+			<div class="footer-col">
+				<p class="uptime-counter"><span class="status-dot"></span><span>Local time (Sydney): <span id="local-time-value">--:-- --</span></span></p>
+				<button type="button" class="footer-link-btn" id="backToTop">&uarr; Back to top</button>
+			</div>
+			<div class="footer-col footer-col-right">
+				<p>&copy; 2026 Kai Cryan<span class="blink-cursor" aria-hidden="true">_</span></p>
+				<p>Case study written from real working notes kept throughout the project.</p>
+			</div>
+		</div>
+	</footer>
+
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Spec page viewer" hidden>
+	<button type="button" class="lightbox-btn lightbox-close" id="lightboxClose" aria-label="Close">&times;</button>
+	<button type="button" class="lightbox-btn lightbox-prev" id="lightboxPrev" aria-label="Previous page"><span class="lightbox-btn-icon">&#8249;</span></button>
+	<div class="lightbox-frame">
+		<div class="lightbox-loadbar" id="lightboxLoadbar" aria-hidden="true"></div>
+		<img class="lightbox-img" id="lightboxImg" src="" alt="">
+		<div class="lightbox-tiles" id="lightboxTiles" aria-hidden="true"></div>
+		<canvas class="lightbox-gl" id="lightboxGL" aria-hidden="true"></canvas>
+	</div>
+	<button type="button" class="lightbox-btn lightbox-next" id="lightboxNext" aria-label="Next page"><span class="lightbox-btn-icon">&#8250;</span></button>
+	<div class="lightbox-caption" id="lightboxCaption"></div>
+	<div class="lightbox-counter" id="lightboxCounter"></div>
+</div>
+
+</main>
+<script>
+(function () {
+	"use strict";
+	var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	var coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+	if (reduceMotion || coarsePointer) return;
+
+	var strength = 0.25;
+	var maxOffset = 14;
+	document.querySelectorAll(".magnetic").forEach(function (el) {
+		el.addEventListener("mousemove", function (e) {
+			var r = el.getBoundingClientRect();
+			var dx = Math.max(-maxOffset, Math.min(maxOffset, (e.clientX - r.left - r.width / 2) * strength));
+			var dy = Math.max(-maxOffset, Math.min(maxOffset, (e.clientY - r.top - r.height / 2) * strength));
+			el.style.transform = "translate(" + dx + "px," + dy + "px)";
+		});
+		el.addEventListener("mouseleave", function () {
+			el.style.transform = "";
+		});
+	});
+})();
+</script>
+<script>
+(function () {
+	"use strict";
+	var gallery = document.getElementById("specGallery");
+	if (!gallery) return;
+
+	var thumbs = Array.prototype.slice.call(gallery.querySelectorAll("button"));
+	var lightbox = document.getElementById("lightbox");
+	var img = document.getElementById("lightboxImg");
+	var loadbar = document.getElementById("lightboxLoadbar");
+	var tilesEl = document.getElementById("lightboxTiles");
+	var counter = document.getElementById("lightboxCounter");
+	var caption = document.getElementById("lightboxCaption");
+	var closeBtn = document.getElementById("lightboxClose");
+	var prevBtn = document.getElementById("lightboxPrev");
+	var nextBtn = document.getElementById("lightboxNext");
+	var current = 0;
+	var lastFocused = null;
+	var TILE_COLS = 8;
+	var TILE_ROWS = 6;
+	var tiles = [];
+
+	(function buildTiles() {
+		for (var i = 0; i < TILE_COLS * TILE_ROWS; i++) {
+			var t = document.createElement("div");
+			t.className = "lightbox-tile";
+			tilesEl.appendChild(t);
+			tiles.push(t);
+		}
+	})();
+
+	// Re-adding a class that's already present doesn't restart a CSS
+	// animation -- force a reflow between remove/add so the load-bar
+	// effect replays on every page change, not just the first.
+	function retrigger(el, cls, extraCls) {
+		el.classList.remove("loading", "dir-prev");
+		void el.offsetWidth;
+		el.classList.add(cls);
+		if (extraCls) el.classList.add(extraCls);
+	}
+
+	// Cover the image again, then release each tile at its own moment --
+	// an asynchronous, out-of-order reveal (not a uniform wipe) reads as
+	// data arriving over a network rather than a slideshow effect. When
+	// navigating (dir set), tiles nearer the edge the new page "arrives
+	// from" resolve slightly sooner on average, layering a subtle flow
+	// direction on top of the randomness without ever sliding the image
+	// itself across the frame.
+	function resolveTiles(dir) {
+		tiles.forEach(function (t) { t.classList.remove("resolve"); });
+		void tilesEl.offsetWidth;
+		tiles.forEach(function (t, i) {
+			var col = i % TILE_COLS;
+			var bias = 0;
+			if (dir === "next") bias = (TILE_COLS - 1 - col) * 20;
+			else if (dir === "prev") bias = col * 20;
+			t.style.setProperty("--d", Math.round(bias + Math.random() * 200) + "ms");
+			t.classList.add("resolve");
+		});
+	}
+
+	function show(index, dir) {
+		current = (index + thumbs.length) % thumbs.length;
+		var thumb = thumbs[current];
+		var url = thumb.getAttribute("data-full");
+		var description = thumb.getAttribute("data-alt") || "";
+		var pageNum = thumb.getAttribute("data-page");
+		img.src = url;
+		img.alt = description;
+		counter.textContent = (current + 1) + " / " + thumbs.length;
+		caption.textContent = "";
+		if (pageNum) {
+			var badge = document.createElement("span");
+			badge.className = "wireframe-badge";
+			badge.textContent = "Wireframe " + pageNum + "/5";
+			caption.appendChild(badge);
+		}
+		caption.appendChild(document.createTextNode(description));
+		retrigger(loadbar, "loading", dir === "prev" ? "dir-prev" : null);
+		resolveTiles(dir);
+		// Fires whether or not anything is listening -- lets an optional
+		// enhancement (the WebGL transition layer, loaded separately) hook
+		// in without this script needing to know it exists.
+		lightbox.dispatchEvent(new CustomEvent("lightboxshow", { detail: { url: url, dir: dir } }));
+	}
+
+	function open(index) {
+		lastFocused = document.activeElement;
+		lightbox.hidden = false;
+		lightbox.classList.add("is-open");
+		show(index);
+		document.documentElement.style.overflow = "hidden";
+		closeBtn.focus();
+	}
+
+	function close() {
+		lightbox.hidden = true;
+		lightbox.classList.remove("is-open");
+		document.documentElement.style.overflow = "";
+		if (lastFocused) lastFocused.focus();
+	}
+
+	thumbs.forEach(function (thumb, i) {
+		thumb.addEventListener("click", function () { open(i); });
+	});
+	closeBtn.addEventListener("click", close);
+	prevBtn.addEventListener("click", function () { show(current - 1, "prev"); });
+	nextBtn.addEventListener("click", function () { show(current + 1, "next"); });
+	lightbox.addEventListener("click", function (e) {
+		if (e.target === lightbox) close();
+	});
+	document.addEventListener("keydown", function (e) {
+		if (lightbox.hidden) return;
+		if (e.key === "Escape") close();
+		else if (e.key === "ArrowLeft") show(current - 1, "prev");
+		else if (e.key === "ArrowRight") show(current + 1, "next");
+	});
+})();
+</script>
+<script type="module">
+// Progressive enhancement: a WebGL shader-driven crossfade for the spec
+// gallery lightbox, replacing the CSS tile-reveal with a smoother
+// noise-based "dissolve" (with a directional bias + chromatic-aberration
+// edge on page-to-page navigation). If Three.js fails to load, WebGL is
+// unavailable, or the user has prefers-reduced-motion set, this script
+// simply never activates .gl-active and the CSS/tile fallback (already
+// fully functional on its own) remains exactly what's shown -- nothing
+// here can break the base experience.
+import * as THREE from "three";
+
+(function () {
+	"use strict";
+	if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+	var lightbox = document.getElementById("lightbox");
+	var frame = lightbox && lightbox.querySelector(".lightbox-frame");
+	var canvasEl = document.getElementById("lightboxGL");
+	if (!lightbox || !frame || !canvasEl) return;
+
+	var renderer, scene, camera, material;
+	var loader = new THREE.TextureLoader();
+	var textureCache = {};
+	var currentTex = null;
+	var blackTex = null;
+
+	function init() {
+		try {
+			renderer = new THREE.WebGLRenderer({ canvas: canvasEl, alpha: true, antialias: true });
+		} catch (e) {
+			return false;
+		}
+		renderer.outputColorSpace = THREE.SRGBColorSpace;
+		renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+
+		blackTex = new THREE.DataTexture(new Uint8Array([0, 0, 0, 255]), 1, 1, THREE.RGBAFormat);
+		blackTex.needsUpdate = true;
+
+		scene = new THREE.Scene();
+		camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10);
+		camera.position.z = 1;
+
+		// A plain, precise crossfade -- no procedural noise, no separate
+		// decorative layer. Earlier attempts (a noise dissolve, then a
+		// standalone particle burst, then a network-graph animation that
+		// played and vanished before the image even settled) each added
+		// something with no clear reason to exist relative to "an image is
+		// opening" -- this is deliberately just the crossfade itself, with
+		// the network conceit carried by the thin loading bar already
+		// used elsewhere on this page (unhidden for WebGL mode below)
+		// rather than a bespoke effect layered on top.
+		material = new THREE.ShaderMaterial({
+			uniforms: {
+				uFrom: { value: null },
+				uTo: { value: null },
+				uProgress: { value: 1 }
+			},
+			vertexShader: [
+				"varying vec2 vUv;",
+				"void main() {",
+				"  vUv = uv;",
+				"  gl_Position = vec4(position.xy, 0.0, 1.0);",
+				"}"
+			].join("\n"),
+			fragmentShader: [
+				"precision highp float;",
+				"varying vec2 vUv;",
+				"uniform sampler2D uFrom;",
+				"uniform sampler2D uTo;",
+				"uniform float uProgress;",
+				"void main() {",
+				"  vec4 colFrom = texture2D(uFrom, vUv);",
+				"  vec4 colTo = texture2D(uTo, vUv);",
+				"  gl_FragColor = mix(colFrom, colTo, clamp(uProgress, 0.0, 1.0));",
+				"}"
+			].join("\n")
+		});
+
+		scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material));
+		return true;
+	}
+
+	function render() {
+		renderer.render(scene, camera);
+	}
+
+	function computeContainSize(naturalW, naturalH) {
+		var maxW = Math.min(900, window.innerWidth * 0.9);
+		var maxH = window.innerHeight * 0.82;
+		var scale = Math.min(1, maxW / naturalW, maxH / naturalH);
+		return { w: Math.max(1, Math.round(naturalW * scale)), h: Math.max(1, Math.round(naturalH * scale)) };
+	}
+
+	function applySize(naturalW, naturalH) {
+		var size = computeContainSize(naturalW, naturalH);
+		frame.style.width = size.w + "px";
+		frame.style.height = size.h + "px";
+		renderer.setSize(size.w, size.h, false);
+	}
+
+	function loadTexture(url) {
+		if (textureCache[url]) return Promise.resolve(textureCache[url]);
+		return new Promise(function (resolve, reject) {
+			loader.load(url, function (tex) {
+				tex.colorSpace = THREE.SRGBColorSpace;
+				tex.minFilter = THREE.LinearFilter;
+				tex.magFilter = THREE.LinearFilter;
+				tex.generateMipmaps = false;
+				textureCache[url] = tex;
+				resolve(tex);
+			}, undefined, reject);
+		});
+	}
+
+	function animateTransition(opts) {
+		var start = null;
+		var dur = opts.dur || 700;
+		function tick(now) {
+			if (start === null) start = now;
+			var t = Math.min(1, (now - start) / dur);
+			var eased = 1 - Math.pow(1 - t, 3);
+			material.uniforms.uProgress.value = eased;
+			render();
+			if (t < 1) requestAnimationFrame(tick);
+		}
+		requestAnimationFrame(tick);
+	}
+
+	function handleShow(detail) {
+		loadTexture(detail.url).then(function (tex) {
+			applySize(tex.image.naturalWidth, tex.image.naturalHeight);
+			frame.classList.add("gl-active");
+			canvasEl.style.opacity = "1";
+			if (!currentTex || !detail.dir) {
+				// Opening reveal: a slightly slower crossfade out of black.
+				material.uniforms.uFrom.value = blackTex;
+				material.uniforms.uTo.value = tex;
+				animateTransition({ dur: 650 });
+			} else {
+				// Page-to-page: a quick, plain crossfade.
+				material.uniforms.uFrom.value = currentTex;
+				material.uniforms.uTo.value = tex;
+				animateTransition({ dur: 400 });
+			}
+			currentTex = tex;
+		}).catch(function () {
+			// Texture failed to load -- leave gl-active off, CSS fallback stays visible.
+		});
+	}
+
+	if (!init()) return;
+
+	lightbox.addEventListener("lightboxshow", function (e) { handleShow(e.detail); });
+	window.addEventListener("resize", function () {
+		if (currentTex && frame.classList.contains("gl-active")) {
+			applySize(currentTex.image.naturalWidth, currentTex.image.naturalHeight);
+			render();
+		}
+	});
+})();
+</script>
+
+<script>
+(function () {
+	"use strict";
+	var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	if (reduceMotion) return;
+
+	var canvas = document.getElementById("network-canvas");
+	if (!canvas || !canvas.getContext) return;
+	var ctx = canvas.getContext("2d");
+
+	var dpr = Math.min(window.devicePixelRatio || 1, 2);
+	var w, h, nodes;
+	var linkDist = 150;
+
+	var canHoverTendril = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+	var tendrilRadius = 220;
+	var mouseX = null, mouseY = null;
+	if (canHoverTendril) {
+		window.addEventListener("mousemove", function (e) {
+			mouseX = e.clientX;
+			mouseY = e.clientY;
+		}, { passive: true });
+		window.addEventListener("mouseout", function (e) {
+			if (!e.relatedTarget) { mouseX = null; mouseY = null; }
+		});
+	}
+
+	function resize() {
+		w = window.innerWidth;
+		h = window.innerHeight;
+		canvas.width = w * dpr;
+		canvas.height = h * dpr;
+		canvas.style.width = w + "px";
+		canvas.style.height = h + "px";
+		ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+	}
+
+	function makeNodes() {
+		var count = Math.round((w * h) / 22000);
+		count = Math.max(18, Math.min(count, 55));
+		nodes = [];
+		for (var i = 0; i < count; i++) {
+			nodes.push({
+				x: Math.random() * w,
+				y: Math.random() * h,
+				vx: (Math.random() - 0.5) * 0.18,
+				vy: (Math.random() - 0.5) * 0.18,
+			});
+		}
+	}
+
+	resize();
+	makeNodes();
+	window.addEventListener("resize", function () {
+		resize();
+		makeNodes();
+	});
+
+	function tick() {
+		ctx.clearRect(0, 0, w, h);
+
+		for (var i = 0; i < nodes.length; i++) {
+			var n = nodes[i];
+			n.x += n.vx;
+			n.y += n.vy;
+			if (n.x < 0 || n.x > w) n.vx *= -1;
+			if (n.y < 0 || n.y > h) n.vy *= -1;
+			n.x = Math.max(0, Math.min(w, n.x));
+			n.y = Math.max(0, Math.min(h, n.y));
+		}
+
+		for (var a = 0; a < nodes.length; a++) {
+			for (var b = a + 1; b < nodes.length; b++) {
+				var dx = nodes[a].x - nodes[b].x;
+				var dy = nodes[a].y - nodes[b].y;
+				var dist = Math.sqrt(dx * dx + dy * dy);
+				if (dist < linkDist) {
+					ctx.strokeStyle = "rgba(59, 130, 246, " + (0.16 * (1 - dist / linkDist)) + ")";
+					ctx.lineWidth = 1;
+					ctx.beginPath();
+					ctx.moveTo(nodes[a].x, nodes[a].y);
+					ctx.lineTo(nodes[b].x, nodes[b].y);
+					ctx.stroke();
+				}
+			}
+		}
+
+		var nearestNode = null, nearestDist = tendrilRadius;
+		if (mouseX !== null) {
+			for (var k = 0; k < nodes.length; k++) {
+				var ndx = nodes[k].x - mouseX, ndy = nodes[k].y - mouseY;
+				var ndist = Math.sqrt(ndx * ndx + ndy * ndy);
+				if (ndist < nearestDist) { nearestDist = ndist; nearestNode = nodes[k]; }
+			}
+		}
+
+		ctx.fillStyle = "rgba(147, 197, 253, 0.55)";
+		for (var j = 0; j < nodes.length; j++) {
+			if (nodes[j] === nearestNode) continue;
+			ctx.beginPath();
+			ctx.arc(nodes[j].x, nodes[j].y, 1.6, 0, Math.PI * 2);
+			ctx.fill();
+		}
+
+		if (nearestNode) {
+			var tendrilFade = 1 - nearestDist / tendrilRadius;
+			ctx.strokeStyle = "rgba(147, 197, 253, " + (tendrilFade * 0.5).toFixed(3) + ")";
+			ctx.lineWidth = 1;
+			ctx.beginPath();
+			ctx.moveTo(nearestNode.x, nearestNode.y);
+			ctx.lineTo(mouseX, mouseY);
+			ctx.stroke();
+
+			ctx.fillStyle = "rgba(147, 197, 253, " + (0.55 + tendrilFade * 0.45).toFixed(3) + ")";
+			ctx.beginPath();
+			ctx.arc(nearestNode.x, nearestNode.y, 1.6 + tendrilFade * 1.4, 0, Math.PI * 2);
+			ctx.fill();
+		}
+
+		requestAnimationFrame(tick);
+	}
+	requestAnimationFrame(tick);
+})();
+</script>
+
+<script>
+(function () {
+	"use strict";
+	var el = document.getElementById("local-time-value");
+	if (!el) return;
+
+	var formatter = new Intl.DateTimeFormat("en-AU", {
+		timeZone: "Australia/Sydney",
+		hour: "2-digit",
+		minute: "2-digit",
+		second: "2-digit",
+		hour12: false,
+	});
+
+	function tick() {
+		var now = new Date();
+		var ms = String(now.getMilliseconds()).padStart(3, "0");
+		el.textContent = formatter.format(now) + "." + ms;
+		requestAnimationFrame(tick);
+	}
+	tick();
+})();
+</script>
+
+<script>
+(function () {
+	"use strict";
+	var backToTop = document.getElementById("backToTop");
+	if (!backToTop) return;
+	var reduceMotionTop = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	backToTop.addEventListener("click", function () {
+		window.scrollTo({ top: 0, behavior: reduceMotionTop ? "auto" : "smooth" });
+	});
+})();
+</script>
+
+<script>
+(function () {
+	"use strict";
+	var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	var canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+	if (reduceMotion || !canHover) return;
+
+	var maxTilt = 9;
+	document.querySelectorAll(".gallery-grid button, .screenshot-img").forEach(function (el) {
+		el.addEventListener("mouseenter", function () {
+			el.classList.add("tilting");
+		});
+		el.addEventListener("mousemove", function (e) {
+			var r = el.getBoundingClientRect();
+			var px = (e.clientX - r.left) / r.width - 0.5;
+			var py = (e.clientY - r.top) / r.height - 0.5;
+			el.style.transform = "perspective(900px) rotateY(" + (px * maxTilt * 2) + "deg) rotateX(" + (-py * maxTilt * 2) + "deg) scale(1.04)";
+		});
+		el.addEventListener("mouseleave", function () {
+			el.style.transform = "";
+			el.classList.remove("tilting");
+		});
+	});
+})();
+</script>
+
+<script>
+(function () {
+	"use strict";
+	var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	if (reduceMotion || !("IntersectionObserver" in window)) return;
+
+	document.body.classList.add("js-reveal-ready");
+
+	// Letter-scramble/decode effect for section headers (h2) -- plays
+	// once, the first time each one scrolls into view. Same effect as
+	// the homepage.
+	var scrambleChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	function scrambleText(el) {
+		var finalText = el.textContent;
+		var duration = 1800;
+		var startTime = null;
+
+		function step(timestamp) {
+			if (startTime === null) startTime = timestamp;
+			var progress = Math.min((timestamp - startTime) / duration, 1);
+			var revealCount = Math.floor(progress * finalText.length);
+			var output = "";
+			for (var i = 0; i < finalText.length; i++) {
+				if (i < revealCount || finalText[i] === " ") {
+					output += finalText[i];
+				} else {
+					output += scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
+				}
+			}
+			el.textContent = output;
+			if (progress < 1) {
+				requestAnimationFrame(step);
+			} else {
+				el.textContent = finalText;
+			}
+		}
+		requestAnimationFrame(step);
+	}
+
+	var observer = new IntersectionObserver(function (entries) {
+		entries.forEach(function (entry) {
+			if (entry.isIntersecting) {
+				entry.target.classList.add("is-visible");
+				var heading = entry.target.querySelector("h2");
+				if (heading && !heading.dataset.scrambled) {
+					heading.dataset.scrambled = "true";
+					scrambleText(heading);
+				}
+			} else {
+				entry.target.classList.toggle("reveal-from-above", entry.boundingClientRect.top < 0);
+				entry.target.classList.remove("is-visible");
+			}
+		});
+	}, { threshold: 0.15, rootMargin: "0px 0px -10% 0px" });
+
+	// Elements already in the viewport on load (e.g. the first section
+	// right below the hero, unlike the homepage where the hero itself
+	// fills the screen) can have IntersectionObserver fire its first
+	// callback before the browser has actually painted the initial
+	// blurred/hidden state -- js-reveal-ready and is-visible then land in
+	// the same frame, so there's no "from" state to transition out of and
+	// the element just snaps straight to visible with no animation. A
+	// double rAF guarantees one full frame renders with the hidden state
+	// committed before observation (and therefore the first possible
+	// is-visible) begins.
+	requestAnimationFrame(function () {
+		requestAnimationFrame(function () {
+			document.querySelectorAll(".reveal").forEach(function (el) {
+				observer.observe(el);
+			});
+		});
+	});
+})();
+</script>
+
+<script>
+(function () {
+	"use strict";
+	var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	var canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+	if (reduceMotion || !canHover) return;
+
+	var dot = document.querySelector(".cursor-dot");
+	var ring = document.querySelector(".cursor-ring");
+	if (!dot || !ring) return;
+
+	var mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+	var ringEase = 0.18;
+	var started = false;
+
+	window.addEventListener("mousemove", function (e) {
+		mouseX = e.clientX;
+		mouseY = e.clientY;
+		dot.style.left = mouseX + "px";
+		dot.style.top = mouseY + "px";
+		if (!started) {
+			started = true;
+			ringX = mouseX;
+			ringY = mouseY;
+			document.body.classList.add("custom-cursor-active");
+		}
+	}, { passive: true });
+
+	function tick() {
+		ringX += (mouseX - ringX) * ringEase;
+		ringY += (mouseY - ringY) * ringEase;
+		ring.style.left = ringX + "px";
+		ring.style.top = ringY + "px";
+		requestAnimationFrame(tick);
+	}
+	requestAnimationFrame(tick);
+
+	document.querySelectorAll("a, button, .btn, input, textarea, [role='button']").forEach(function (el) {
+		el.addEventListener("mouseenter", function () { document.body.classList.add("cursor-hover"); });
+		el.addEventListener("mouseleave", function () { document.body.classList.remove("cursor-hover"); });
+	});
+
+	document.querySelectorAll(".screenshot-img, .gallery-grid img").forEach(function (el) {
+		el.addEventListener("mouseenter", function () { document.body.classList.add("cursor-view"); });
+		el.addEventListener("mouseleave", function () { document.body.classList.remove("cursor-view"); });
+	});
+})();
+</script>
+</body>
+</html>

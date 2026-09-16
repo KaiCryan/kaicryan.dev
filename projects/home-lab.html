@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home Lab — Kai Cryan</title>
+<meta name="description" content="How a Raspberry Pi Zero 2 W project outgrew itself and became a self-hosted home server handling DNS/DHCP, climate automation, photo storage, and power monitoring for an entire house.">
+<meta property="og:title" content="Home Lab — Case Study">
+<meta property="og:description" content="A self-hosted home network built from scratch — DNS/DHCP takeover, a 20-sensor Zigbee climate automation system, private photo storage, and appliance-level power monitoring.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://kaicryan.dev/projects/home-lab.html">
+<meta property="og:image" content="https://kaicryan.dev/assets/images/home-lab-ha-dashboard.jpg?v=20260812">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Home Lab — Case Study">
+<meta name="twitter:description" content="A self-hosted home network built from scratch — DNS/DHCP takeover, a 20-sensor Zigbee climate automation system, private photo storage, and appliance-level power monitoring.">
+<meta name="twitter:image" content="https://kaicryan.dev/assets/images/home-lab-ha-dashboard.jpg?v=20260812">
+<link rel="icon" href="/assets/images/favicon.ico?v=20260812" sizes="any">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16.png?v=20260812">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32.png?v=20260812">
+<link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png?v=20260812">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+<style>
+	:root {
+		--bg: #08090b;
+		--surface: #15181d;
+		--border: #262b33;
+		--ink: #f2f1ee;
+		--muted: #9aa1ab;
+		--accent: #3b82f6;
+		--accent-soft: rgba(59, 130, 246, 0.14);
+		--font: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	}
+	* { box-sizing: border-box; }
+	html { scroll-behavior: smooth; overflow-x: hidden; }
+	body {
+		margin: 0;
+		overflow-wrap: break-word;
+		background-color: var(--bg);
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.09'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+		background-repeat: repeat;
+		color: var(--ink);
+		font-family: var(--font);
+		font-size: 16.5px;
+		line-height: 1.65;
+		-webkit-font-smoothing: antialiased;
+	}
+	p { color: var(--muted); }
+	a { color: var(--accent); }
+	code {
+		background: var(--accent-soft);
+		color: #93c5fd;
+		padding: 2px 6px;
+		border-radius: 4px;
+		font-size: 0.88em;
+	}
+
+	.skip-link {
+		position: absolute;
+		top: -48px;
+		left: 12px;
+		z-index: 100;
+		background: var(--accent);
+		color: #06111f;
+		padding: 10px 18px;
+		border-radius: 6px;
+		font-weight: 700;
+		font-size: 0.9rem;
+		text-decoration: none;
+		transition: top 0.15s ease;
+	}
+	.skip-link:focus { top: 12px; }
+	a:focus-visible, button:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 3px;
+		border-radius: 2px;
+	}
+
+	.progress-bar {
+		position: fixed;
+		top: 0;
+		left: 0;
+		height: 3px;
+		width: 100%;
+		background: var(--accent);
+		transform-origin: 0 50%;
+		transform: scaleX(0);
+		z-index: 20;
+		animation: progress-fill linear both;
+		animation-timeline: scroll(root);
+	}
+	@keyframes progress-fill {
+		from { transform: scaleX(0); }
+		to { transform: scaleX(1); }
+	}
+
+	.ambient-bg {
+		position: fixed;
+		inset: 0;
+		z-index: -2;
+		overflow: hidden;
+		pointer-events: none;
+	}
+	.ambient-bg::before,
+	.ambient-bg::after {
+		content: "";
+		position: absolute;
+		border-radius: 50%;
+		filter: blur(20px);
+	}
+	.ambient-bg::before {
+		top: -20vh;
+		right: -15vw;
+		width: max(55vw, 480px);
+		height: max(55vw, 480px);
+		background: radial-gradient(circle, rgba(59, 130, 246, 0.46) 0%, transparent 70%);
+		animation: glow-breathe-a 11s ease-in-out infinite;
+	}
+	.ambient-bg::after {
+		bottom: -25vh;
+		left: -18vw;
+		width: max(50vw, 440px);
+		height: max(50vw, 440px);
+		background: radial-gradient(circle, rgba(59, 130, 246, 0.36) 0%, transparent 70%);
+		animation: glow-breathe-b 14s ease-in-out infinite;
+	}
+	.network-canvas {
+		position: fixed;
+		inset: 0;
+		z-index: -1;
+		pointer-events: none;
+	}
+	/* Custom cursor: same as the homepage -- a small dot that tracks the
+	   mouse directly, plus a larger ring that trails behind it (JS-driven
+	   lerp easing). Expands and tints accent-blue over anything
+	   interactive; morphs into a solid "View" pill over the screenshot
+	   image. Desktop-only -- guarded here and in JS by (hover: hover) and
+	   (pointer: fine), so touch devices keep their native cursor
+	   untouched. */
+	@media (hover: hover) and (pointer: fine) {
+		body.custom-cursor-active,
+		body.custom-cursor-active a,
+		body.custom-cursor-active button,
+		body.custom-cursor-active input,
+		body.custom-cursor-active textarea,
+		body.custom-cursor-active [role="button"] {
+			cursor: none;
+		}
+		.cursor-dot, .cursor-ring {
+			position: fixed;
+			top: 0; left: 0;
+			pointer-events: none;
+			z-index: 9999;
+			border-radius: 50%;
+			opacity: 0;
+			transition: opacity 0.25s ease;
+		}
+		body.custom-cursor-active .cursor-dot,
+		body.custom-cursor-active .cursor-ring {
+			opacity: 1;
+		}
+		.cursor-dot {
+			width: 8px; height: 8px;
+			margin: -4px 0 0 -4px;
+			background: var(--accent);
+			box-shadow: 0 0 14px 3px rgba(59, 130, 246, 0.65);
+			transition: opacity 0.25s ease, transform 0.25s cubic-bezier(.16,1,.3,1);
+		}
+		.cursor-ring {
+			width: 38px; height: 38px;
+			margin: -19px 0 0 -19px;
+			border: 1.5px solid rgba(59, 130, 246, 0.55);
+			display: flex; align-items: center; justify-content: center;
+			transition: opacity 0.25s ease, width 0.35s cubic-bezier(.16,1,.3,1),
+				height 0.35s cubic-bezier(.16,1,.3,1), margin 0.35s cubic-bezier(.16,1,.3,1),
+				border-color 0.3s ease, background-color 0.3s ease;
+		}
+		.cursor-ring span {
+			opacity: 0;
+			font-size: 0.62rem;
+			letter-spacing: 1.5px;
+			text-transform: uppercase;
+			font-weight: 700;
+			color: #06111f;
+			transition: opacity 0.2s ease;
+		}
+		body.cursor-hover .cursor-dot { transform: scale(0); }
+		body.cursor-hover .cursor-ring {
+			width: 68px; height: 68px;
+			margin: -34px 0 0 -34px;
+			border-color: var(--accent);
+			background: rgba(59, 130, 246, 0.14);
+		}
+		body.cursor-view .cursor-ring {
+			width: 88px; height: 88px;
+			margin: -44px 0 0 -44px;
+			background: var(--accent);
+			border-color: var(--accent);
+		}
+		body.cursor-view .cursor-ring span { opacity: 1; }
+	}
+	@keyframes glow-breathe-a {
+		0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.65; }
+		50% { transform: translate(-60px, 50px) scale(1.4); opacity: 1; }
+	}
+	@keyframes glow-breathe-b {
+		0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.55; }
+		50% { transform: translate(50px, -40px) scale(1.35); opacity: 1; }
+	}
+
+	/* Top nav */
+	nav.topnav {
+		position: sticky;
+		top: 0;
+		z-index: 10;
+		background: rgba(13, 15, 18, 0.88);
+		backdrop-filter: blur(10px);
+		border-bottom: 1px solid var(--border);
+	}
+	.topnav-inner {
+		max-width: 880px;
+		margin: 0 auto;
+		padding: 20px 24px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+	}
+	.brand {
+		display: inline-block;
+		font-weight: 700;
+		font-size: 1.05rem;
+		letter-spacing: 0.2px;
+		color: var(--ink);
+		text-decoration: none;
+		transition: color 0.2s ease, transform 0.2s cubic-bezier(.16,1,.3,1);
+	}
+	.brand:hover { color: var(--accent); transform: scale(1.08); }
+	.topnav-links {
+		display: flex;
+		gap: 22px;
+		flex-wrap: wrap;
+	}
+	.topnav-links a {
+		font-size: 0.8rem;
+		font-weight: 500;
+		letter-spacing: 0.4px;
+		text-transform: uppercase;
+		color: var(--muted);
+		text-decoration: none;
+		transition: font-weight 0.25s ease, color 0.15s ease;
+	}
+	.topnav-links a:hover { color: var(--ink); font-weight: 700; }
+
+	.wrap {
+		max-width: 880px;
+		margin: 0 auto;
+		padding: 0 24px 120px;
+	}
+
+	/* Hero */
+	header.hero {
+		position: relative;
+		padding: 72px 0 64px;
+		border-bottom: 1px solid var(--border);
+	}
+	.eyebrow {
+		text-transform: uppercase;
+		letter-spacing: 2px;
+		font-size: 0.8rem;
+		color: var(--accent);
+		font-weight: 700;
+		margin-bottom: 18px;
+	}
+	h1 {
+		font-weight: 700;
+		font-size: clamp(2rem, 4.4vw, 2.9rem);
+		line-height: 1.25;
+		margin: 0 0 22px;
+		letter-spacing: -0.3px;
+	}
+	@supports ((background-clip: text) or (-webkit-background-clip: text)) {
+		h1 {
+			background: linear-gradient(100deg, var(--ink) 25%, var(--accent) 50%, var(--ink) 75%);
+			background-size: 220% auto;
+			-webkit-background-clip: text;
+			background-clip: text;
+			color: transparent;
+			animation: shimmer 7s ease-in-out infinite;
+		}
+	}
+	@keyframes shimmer {
+		0%, 100% { background-position: 200% center; }
+		50% { background-position: -20% center; }
+	}
+	.lede {
+		font-size: 1.14rem;
+		max-width: 62ch;
+		color: var(--muted);
+		line-height: 1.7;
+	}
+	.stat-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 40px;
+		margin-top: 40px;
+		padding-top: 32px;
+		border-top: 1px solid var(--border);
+	}
+	.stat .label {
+		text-transform: uppercase;
+		letter-spacing: 1px;
+		font-size: 0.72rem;
+		color: var(--muted);
+		font-weight: 600;
+		margin-bottom: 6px;
+	}
+	.stat .value {
+		font-size: 1.02rem;
+		font-weight: 600;
+	}
+	.stat .value a { color: var(--ink); text-decoration-color: var(--border); }
+	.cta-row { margin-top: 32px; display: flex; gap: 12px; flex-wrap: wrap; }
+	.btn {
+		display: inline-block;
+		padding: 12px 24px;
+		border-radius: 6px;
+		text-decoration: none;
+		font-weight: 600;
+		font-size: 0.92rem;
+		letter-spacing: 0.2px;
+		position: relative;
+		overflow: hidden;
+		transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.3s ease, transform 0.25s cubic-bezier(.16,1,.3,1);
+	}
+	.btn::before {
+		content: ""; position: absolute; top: 0; bottom: 0; left: -60%; width: 40%;
+		background: linear-gradient(100deg, transparent, rgba(255,255,255,0.3), transparent);
+		transform: skewX(-18deg); transition: left 0.6s cubic-bezier(.16,1,.3,1); pointer-events: none;
+	}
+	.btn:hover::before { left: 130%; }
+	.btn-primary {
+		z-index: 0;
+		background: transparent;
+		border: 1.5px solid var(--accent);
+		color: var(--ink);
+	}
+	.btn-primary::before { display: none; }
+	.btn-primary::after {
+		content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit;
+		background: var(--accent); transform: scaleX(0); transform-origin: left;
+		transition: transform 0.7s cubic-bezier(.16,1,.3,1);
+	}
+	.btn-primary:hover { color: #06111f; box-shadow: 0 10px 30px rgba(59, 130, 246, 0.45); }
+	.btn-primary:hover::after { transform: scaleX(1); }
+	.btn-secondary { border: 1px solid var(--border); color: var(--ink); }
+	.btn-secondary:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(59, 130, 246, 0.25); }
+	.magnetic { display: inline-block; transition: transform 0.15s ease-out; }
+
+	.section-divider {
+		height: 70px;
+		width: 100vw;
+		margin-left: calc(50% - 50vw);
+		background: linear-gradient(115deg, transparent, var(--accent-soft), transparent);
+		clip-path: polygon(0 34%, 100% 0%, 100% 100%, 0% 100%);
+	}
+
+	/* No longer actually full-bleed -- kept the class name (used by the
+	   tilt/cursor scripts below) but sized/framed to match code369.html's
+	   .screenshot-img exactly, per request: contained to the normal
+	   content column, rounded + bordered + shadowed instead of edge-to-
+	   edge. Wrapper carries the `reveal` entrance animation; the tilt
+	   hover lives on the img itself -- same split the homepage uses
+	   (.project-block reveal > .project-img-wrap tilt) -- reveal and the
+	   tilt hover both animate `transform`, and one element can only have
+	   one transition duration per property at a time (the cascade picks
+	   a winning rule, it doesn't merge them), so putting both on the same
+	   element let .reveal's transition silently eat this element's tilt
+	   transition and made the entrance blur snap instead of animate. */
+	.bleed-img-wrap {
+		display: block;
+		margin: 48px 0;
+	}
+	.bleed-img {
+		display: block;
+		position: relative;
+		width: 100%;
+		border-radius: 10px;
+		border: 1px solid var(--border);
+		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+		transition: box-shadow 0.3s ease, transform 0.15s ease-out, z-index 0s;
+	}
+	/* Same 3D cursor-tilt hover as the homepage's project preview images
+	   (no scan-sweep pseudo-element -- ::after/::before don't render on
+	   replaced elements like <img>, only the tilt+glow apply here). */
+	.bleed-img.tilting {
+		z-index: 30;
+		box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55), 0 0 50px rgba(59, 130, 246, 0.35);
+	}
+
+	/* Sections */
+	section {
+		position: relative;
+		padding: 64px 0;
+		border-bottom: 1px solid var(--border);
+		scroll-margin-top: 90px;
+	}
+	section:last-of-type { border-bottom: none; }
+	section[data-num]::before {
+		content: attr(data-num);
+		position: absolute;
+		top: 12px;
+		right: 0;
+		z-index: -1;
+		font-size: clamp(5rem, 14vw, 11rem);
+		font-weight: 700;
+		line-height: 1;
+		color: transparent;
+		-webkit-text-stroke: 1px rgba(242, 241, 238, 0.055);
+		pointer-events: none;
+		user-select: none;
+	}
+	@media (max-width: 760px) {
+		section[data-num]::before { display: none; }
+	}
+	.section-head {
+		display: flex;
+		align-items: baseline;
+		gap: 14px;
+		margin-bottom: 24px;
+	}
+	.section-num {
+		font-size: 0.95rem;
+		color: var(--accent);
+		font-weight: 700;
+	}
+	h2 {
+		font-weight: 700;
+		font-size: 1.55rem;
+		margin: 0;
+		letter-spacing: -0.2px;
+	}
+	h3 { color: var(--ink); font-size: 1.02rem; margin: 0 0 8px; }
+
+	.item-list { display: flex; flex-direction: column; gap: 26px; }
+	.item-row { display: flex; gap: 20px; align-items: flex-start; }
+	.item-num { font-size: 1.2rem; font-weight: 700; color: var(--accent); min-width: 30px; }
+	.item-row h3 { margin: 0 0 6px; }
+	.item-row p { margin: 0; font-size: 0.94rem; }
+
+	.stack-list {
+		list-style: none;
+		margin: 18px 0 0;
+		padding: 0;
+		display: grid;
+		gap: 12px;
+	}
+	.stack-list li {
+		display: grid;
+		grid-template-columns: 160px 1fr;
+		gap: 16px;
+		font-size: 0.92rem;
+		border-bottom: 1px solid var(--border);
+		padding-bottom: 12px;
+	}
+	.stack-list li:last-child { border-bottom: none; padding-bottom: 0; }
+	.stack-list strong { color: var(--ink); }
+
+	.decision-note {
+		margin-top: 18px;
+		padding: 16px 20px;
+		border-left: 3px solid var(--accent);
+		background: var(--accent-soft);
+		font-size: 0.92rem;
+		border-radius: 0 4px 4px 0;
+		color: var(--ink);
+	}
+	.decision-note p { color: inherit; margin: 0; }
+	.decision-note strong { color: var(--accent); }
+
+	.pullquote {
+		font-size: 1.3rem;
+		font-weight: 500;
+		line-height: 1.5;
+		color: var(--ink);
+		border-left: 3px solid var(--accent);
+		padding-left: 24px;
+		margin: 18px 0 0;
+	}
+	#network .pullquote {
+		font-size: clamp(1.5rem, 3vw, 2rem);
+		line-height: 1.4;
+	}
+
+	.flow-steps {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 10px;
+		margin-top: 18px;
+	}
+	.flow-step {
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: 8px;
+		padding: 14px 18px;
+		font-size: 0.88rem;
+		font-weight: 600;
+		color: var(--ink);
+	}
+	.flow-arrow { color: var(--accent); font-size: 1.1rem; }
+
+	.skills { display: flex; flex-wrap: wrap; gap: 10px; }
+	.skill {
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: 999px;
+		padding: 7px 16px;
+		font-size: 0.85rem;
+		color: var(--ink);
+		font-weight: 500;
+	}
+
+	footer {
+		padding: 50px 0 60px;
+		color: var(--muted);
+		font-size: 0.85rem;
+		border-top: 1px solid var(--border);
+	}
+	footer a { color: var(--accent); }
+	.footer-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; flex-wrap: wrap; }
+	.footer-col { display: flex; flex-direction: column; gap: 12px; }
+	.footer-col-right { align-items: flex-end; text-align: right; }
+	.footer-col p { margin: 0; }
+	.footer-link-btn {
+		font-family: inherit; font-size: 0.78rem; color: var(--muted); background: none; border: none;
+		padding: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+		transition: color 0.2s ease;
+	}
+	.footer-link-btn:hover { color: var(--accent); }
+	@media (max-width: 600px) {
+		.footer-row { flex-direction: column; }
+		.footer-col-right { align-items: flex-start; text-align: left; }
+	}
+	.uptime-counter {
+		margin-top: 10px;
+		display: flex;
+		align-items: center;
+		gap: 7px;
+		font-family: "SFMono-Regular", Consolas, monospace;
+		font-size: 0.72rem;
+		color: var(--muted);
+		opacity: 0.8;
+	}
+	.status-dot {
+		display: inline-block;
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: #22c55e;
+		box-shadow: 0 0 8px 2px rgba(34, 197, 94, 0.6);
+		animation: flicker-dot 2.6s steps(1) infinite;
+		flex-shrink: 0;
+	}
+	@keyframes flicker-dot {
+		0%, 100% { opacity: 1; }
+		4% { opacity: 0.25; }
+		8% { opacity: 1; }
+		12% { opacity: 1; }
+		16% { opacity: 0.15; }
+		20% { opacity: 1; }
+		44% { opacity: 1; }
+		47% { opacity: 0.35; }
+		50% { opacity: 1; }
+		74% { opacity: 1; }
+		77% { opacity: 0.2; }
+		81% { opacity: 1; }
+		90% { opacity: 1; }
+		92% { opacity: 0.5; }
+		94% { opacity: 1; }
+	}
+	.blink-cursor {
+		display: inline-block;
+		color: var(--accent);
+		animation: blink-cursor 1s step-end infinite;
+	}
+	@keyframes blink-cursor {
+		0%, 100% { opacity: 1; }
+		50% { opacity: 0; }
+	}
+
+	/* Scroll reveal: real time-based transition (not scroll-linked), toggled
+	   by JS (IntersectionObserver) adding/removing .is-visible. Gated behind
+	   body.js-reveal-ready (added by that same script) so if JS never runs,
+	   .reveal elements simply render normally visible -- no permanently-
+	   invisible content as a failure mode. Matches the homepage's reveal
+	   system exactly (replaces the old native-CSS animation-timeline
+	   version, which faded content back OUT again once scrolled past). */
+	.reveal {
+		transition: opacity 0.9s cubic-bezier(.16,1,.3,1), transform 0.9s cubic-bezier(.16,1,.3,1), filter 0.9s cubic-bezier(.16,1,.3,1);
+	}
+	body.js-reveal-ready .reveal {
+		opacity: 0;
+		transform: translateY(90px) scale(0.9);
+		filter: blur(36px);
+	}
+	body.js-reveal-ready .reveal.reveal-from-above {
+		transform: translateY(-90px) scale(0.9);
+	}
+	body.js-reveal-ready .reveal.is-visible {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+		filter: blur(0);
+	}
+
+	@media (max-width: 640px) {
+		.topnav-links { display: none; }
+		.stack-list li { grid-template-columns: 1fr; gap: 4px; }
+	}
+	@media (prefers-reduced-motion: reduce) {
+		html { scroll-behavior: auto; }
+		*, *::before, *::after {
+			transition: none !important;
+			animation: none !important;
+			scroll-behavior: auto !important;
+		}
+	}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" aria-hidden="true"></div>
+<div class="ambient-bg" aria-hidden="true"></div>
+<canvas class="network-canvas" id="network-canvas" aria-hidden="true"></canvas>
+
+<div class="cursor-dot" aria-hidden="true"></div>
+<div class="cursor-ring" aria-hidden="true"><span>View</span></div>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<nav class="topnav" aria-label="Primary">
+	<div class="topnav-inner">
+		<a class="brand" href="/">← Kai Cryan</a>
+		<div class="topnav-links">
+			<a href="#origin">Origin</a>
+			<a href="#architecture">Architecture</a>
+			<a href="#network">Network</a>
+			<a href="#automation">Automation</a>
+			<a href="#skills">Skills</a>
+			<a href="#next">What's next</a>
+			<a class="magnetic" href="/assets/files/Kai-Cryan-Resume.pdf" target="_blank" rel="noopener">Resume</a>
+		</div>
+	</div>
+</nav>
+
+<main class="wrap" id="main">
+
+	<header class="hero">
+		<div class="bleed-img-wrap reveal"><img class="bleed-img" src="/assets/images/home-lab-ha-dashboard.jpg?v=20260812" alt="Home Assistant dashboard showing live sensor data"></div>
+		<div class="eyebrow">Personal Project — Infrastructure &amp; Networking</div>
+		<h1>Home Lab: building a self-hosted network from scratch</h1>
+		<p class="lede">
+			What started as a small Raspberry Pi project has grown into a fully
+			self-hosted home network — handling DNS/DHCP for every device in the
+			house, a 20-sensor climate automation system, network-wide
+			ad-blocking, private photo storage, and appliance-level power
+			monitoring. Everything is self-hosted, remotely accessible, and built
+			incrementally as I ran into the limits of whatever I'd built before.
+		</p>
+		<div class="cta-row">
+			<a class="btn btn-primary magnetic" href="#origin">Read the case study</a>
+		</div>
+		<div class="stat-row">
+			<div class="stat">
+				<div class="label">Status</div>
+				<div class="value">Ongoing — actively growing</div>
+			</div>
+			<div class="stat">
+				<div class="label">Storage</div>
+				<div class="value">1TB self-hosted</div>
+			</div>
+			<div class="stat">
+				<div class="label">Base OS</div>
+				<div class="value">ZimaOS / Docker</div>
+			</div>
+		</div>
+	</header>
+
+	<div class="section-divider" aria-hidden="true"></div>
+
+	<section id="origin" data-num="01">
+		<div class="section-head reveal"><span class="section-num">01</span><h2>The origin story</h2></div>
+		<p>
+			It started small: a <strong>Raspberry Pi Zero 2 W</strong>, with the
+			goal of running Pi-hole (network ad-blocking) and Home Assistant (home
+			automation) on it. It didn't take long to hit a wall — the Pi Zero 2 W
+			simply didn't have the horsepower to run both reliably.
+		</p>
+		<p>
+			Rather than give up on the idea, I repurposed a decommissioned PC that
+			would otherwise have gone to waste — wiped it, and turned it into a
+			proper home server running <strong>ZimaOS</strong>, a lightweight,
+			Docker-based operating system built for exactly this kind of
+			self-hosting project. That single decision is what let the project
+			actually scale into everything described below.
+		</p>
+	</section>
+
+	<section id="architecture" data-num="02">
+		<div class="section-head reveal"><span class="section-num">02</span><h2>Architecture at a glance</h2></div>
+		<p>The server runs on ZimaOS with everything containerised through Docker, which keeps each service isolated and easy to manage independently.</p>
+		<ul class="stack-list reveal">
+			<li><strong>ZimaOS / Docker</strong><span>The base operating system and container runtime</span></li>
+			<li><strong>Immich</strong><span>Self-hosted photo and video backup</span></li>
+			<li><strong>AdGuard Home</strong><span>Network-wide DNS filtering and DHCP</span></li>
+			<li><strong>Home Assistant</strong><span>Automation hub, tied into a Zigbee sensor network</span></li>
+			<li><strong>Tuya integration</strong><span>A second smart-device ecosystem for lighting and IR control</span></li>
+			<li><strong>Tailscale</strong><span>A VPN mesh network for secure remote access to the whole stack</span></li>
+		</ul>
+	</section>
+
+	<section id="storage" data-num="03">
+		<div class="section-head reveal"><span class="section-num">03</span><h2>Storage &amp; personal cloud</h2></div>
+		<p>
+			The server currently provides <strong>1TB of storage</strong>,
+			accessible from anywhere on the home network. The standout piece here
+			is <strong>Immich</strong>, a self-hosted alternative to iCloud/Google
+			Photos — it automatically backs up photos and videos from every device
+			in the house, which means everyone gets their cloud photo backup
+			without handing that data to a third party, and phones stop running
+			out of storage from a growing camera roll.
+		</p>
+	</section>
+
+	<section id="network" data-num="04">
+		<div class="section-head reveal"><span class="section-num">04</span><h2>Taking over the network: AdGuard Home as DHCP/DNS</h2></div>
+		<p>
+			This is the part of the project I'm proudest of from a networking
+			standpoint. Rather than just running AdGuard Home as a basic
+			ad-blocker, I configured it to be the network's
+			<strong>DHCP server</strong> — meaning the router itself now points to
+			AdGuard for address assignment, and every device on the network
+			resolves DNS through it by default. No per-device configuration, no
+			opt-in required — the filtering and ad-blocking apply network-wide,
+			automatically, the moment a device joins the Wi-Fi.
+		</p>
+		<p class="pullquote reveal">
+			Going from "installed an app" to reconfiguring how the network itself
+			assigns addresses and resolves domains — the kind of infrastructure
+			change that's invisible when it works and breaks everything when it
+			doesn't.
+		</p>
+	</section>
+
+	<section id="automation" data-num="05">
+		<div class="section-head reveal"><span class="section-num">05</span><h2>Sensor network: Zigbee &amp; Home Assistant</h2></div>
+		<p>The climate automation side of the project runs on Home Assistant, tied into a Zigbee mesh network:</p>
+	</section>
+
+	<section>
+		<div class="item-list reveal">
+			<div class="item-row">
+				<div class="item-num">01</div>
+				<div>
+					<h3>20 temperature sensors</h3>
+					<p>Spread throughout the house, connected via a Zigbee hub running on the home server.</p>
+				</div>
+			</div>
+			<div class="item-row">
+				<div class="item-num">02</div>
+				<div>
+					<h3>Mesh range via repeaters</h3>
+					<p>Zigbee is a mesh protocol — range and reliability became a real problem as the sensor count grew, solved by using Zigbee smart plugs as repeaters to strengthen and extend the mesh across the house.</p>
+				</div>
+			</div>
+			<div class="item-row">
+				<div class="item-num">03</div>
+				<div>
+					<h3>Whole-home average</h3>
+					<p>Sensor data feeds into a calculation of whole-home average temperature, rather than relying on any single reading.</p>
+				</div>
+			</div>
+		</div>
+		<p style="margin-top:26px">That average, combined with indoor vs. outdoor temperature and time of day, drives automated control of the home's blinds:</p>
+		<div class="flow-steps">
+			<div class="flow-step">Sensor data</div>
+			<span class="flow-arrow">→</span>
+			<div class="flow-step">Automation logic</div>
+			<span class="flow-arrow">→</span>
+			<div class="flow-step">Blinds open/close</div>
+		</div>
+		<p style="margin-top:14px">This is a genuine closed-loop control system: sensors feed data in, logic processes it, and actuators (the blinds) respond automatically — no manual input.</p>
+	</section>
+
+	<section id="lighting" data-num="06">
+		<div class="section-head reveal"><span class="section-num">06</span><h2>Lighting &amp; air quality automation: Tuya + IR</h2></div>
+		<p>Alongside the Zigbee/Home Assistant side, the project also runs a second smart-device ecosystem through Tuya:</p>
+		<div class="item-list reveal">
+			<div class="item-row">
+				<div class="item-num">01</div>
+				<div>
+					<h3>IKEA smart plugs</h3>
+					<p>Relay signal around the house, extending the Tuya network's range the same way the Zigbee repeaters do for the sensor mesh.</p>
+				</div>
+			</div>
+			<div class="item-row">
+				<div class="item-num">02</div>
+				<div>
+					<h3>Lighting control</h3>
+					<p>The Tuya network controls the home's lighting.</p>
+				</div>
+			</div>
+			<div class="item-row">
+				<div class="item-num">03</div>
+				<div>
+					<h3>IR blaster</h3>
+					<p>Provides control over the TV and fans — devices without native smart connectivity, automated via infrared signals.</p>
+				</div>
+			</div>
+			<div class="item-row">
+				<div class="item-num">04</div>
+				<div>
+					<h3>Air quality response</h3>
+					<p>Air quality sensors feed into the automation logic: when air quality drops, fans and air purifiers trigger automatically, no manual intervention needed.</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section id="power" data-num="07">
+		<div class="section-head reveal"><span class="section-num">07</span><h2>Appliance power monitoring</h2></div>
+		<p>The dishwasher, washing machine, and dryer are all fitted with power monitoring, which tracks when each appliance is actually running and how much power each one draws during a cycle.</p>
+		<p>This turns three previously "dumb" appliances into ones with real usage visibility — useful for figuring out cycle timing, energy costs, and whether something's still running before leaving the house.</p>
+	</section>
+
+	<section id="remote" data-num="08">
+		<div class="section-head reveal"><span class="section-num">08</span><h2>Remote access: Tailscale</h2></div>
+		<p>
+			Every part of this system — storage, Home Assistant, AdGuard, the
+			whole stack — is accessible from anywhere via <strong>Tailscale</strong>,
+			a mesh VPN. This means the network can be checked on, adjusted, or
+			troubleshot remotely without exposing anything directly to the public
+			internet, which matters a lot given how much of this system now
+			controls physical things in the house.
+		</p>
+	</section>
+
+	<section id="skills" data-num="09">
+		<div class="section-head reveal"><span class="section-num">09</span><h2>Skills &amp; technologies demonstrated</h2></div>
+		<div class="skills">
+			<span class="skill">Infrastructure &amp; virtualisation (ZimaOS, Docker)</span>
+			<span class="skill">Networking (DNS, DHCP, network-wide filtering)</span>
+			<span class="skill">VPN mesh networking (Tailscale)</span>
+			<span class="skill">IoT protocols (Zigbee, Tuya)</span>
+			<span class="skill">Mesh range extension via repeaters</span>
+			<span class="skill">Sensor-driven closed-loop automation</span>
+			<span class="skill">Systems troubleshooting &amp; re-architecture</span>
+			<span class="skill">Appliance-level power monitoring</span>
+		</div>
+	</section>
+
+	<section id="next" data-num="10">
+		<div class="section-head reveal"><span class="section-num">10</span><h2>What's next</h2></div>
+		<p>
+			This project is still growing — it started with a single Pi and has
+			already been rebuilt once to keep up with what I wanted it to do.
+			Future additions I'm considering: expanding the sensor network
+			further, adding more granular per-device network monitoring, and
+			building out more advanced automation logic beyond the current
+			temperature/air-quality triggers.
+		</p>
+	</section>
+
+	<footer>
+		<div class="footer-row">
+			<div class="footer-col">
+				<p class="uptime-counter"><span class="status-dot"></span><span>Local time (Sydney): <span id="local-time-value">--:-- --</span></span></p>
+				<button type="button" class="footer-link-btn" id="backToTop">&uarr; Back to top</button>
+			</div>
+			<div class="footer-col footer-col-right">
+				<p>&copy; 2026 Kai Cryan<span class="blink-cursor" aria-hidden="true">_</span></p>
+			</div>
+		</div>
+	</footer>
+
+</main>
+<script>
+(function () {
+	"use strict";
+	var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	var coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+	if (reduceMotion || coarsePointer) return;
+
+	var strength = 0.25;
+	var maxOffset = 14;
+	document.querySelectorAll(".magnetic").forEach(function (el) {
+		el.addEventListener("mousemove", function (e) {
+			var r = el.getBoundingClientRect();
+			var dx = Math.max(-maxOffset, Math.min(maxOffset, (e.clientX - r.left - r.width / 2) * strength));
+			var dy = Math.max(-maxOffset, Math.min(maxOffset, (e.clientY - r.top - r.height / 2) * strength));
+			el.style.transform = "translate(" + dx + "px," + dy + "px)";
+		});
+		el.addEventListener("mouseleave", function () {
+			el.style.transform = "";
+		});
+	});
+})();
+</script>
+
+<script>
+(function () {
+	"use strict";
+	var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	if (reduceMotion) return;
+
+	var canvas = document.getElementById("network-canvas");
+	if (!canvas || !canvas.getContext) return;
+	var ctx = canvas.getContext("2d");
+
+	var dpr = Math.min(window.devicePixelRatio || 1, 2);
+	var w, h, nodes;
+	var linkDist = 150;
+
+	var canHoverTendril = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+	var tendrilRadius = 220;
+	var mouseX = null, mouseY = null;
+	if (canHoverTendril) {
+		window.addEventListener("mousemove", function (e) {
+			mouseX = e.clientX;
+			mouseY = e.clientY;
+		}, { passive: true });
+		window.addEventListener("mouseout", function (e) {
+			if (!e.relatedTarget) { mouseX = null; mouseY = null; }
+		});
+	}
+
+	function resize() {
+		w = window.innerWidth;
+		h = window.innerHeight;
+		canvas.width = w * dpr;
+		canvas.height = h * dpr;
+		canvas.style.width = w + "px";
+		canvas.style.height = h + "px";
+		ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+	}
+
+	function makeNodes() {
+		var count = Math.round((w * h) / 22000);
+		count = Math.max(18, Math.min(count, 55));
+		nodes = [];
+		for (var i = 0; i < count; i++) {
+			nodes.push({
+				x: Math.random() * w,
+				y: Math.random() * h,
+				vx: (Math.random() - 0.5) * 0.18,
+				vy: (Math.random() - 0.5) * 0.18,
+			});
+		}
+	}
+
+	resize();
+	makeNodes();
+	window.addEventListener("resize", function () {
+		resize();
+		makeNodes();
+	});
+
+	function tick() {
+		ctx.clearRect(0, 0, w, h);
+
+		for (var i = 0; i < nodes.length; i++) {
+			var n = nodes[i];
+			n.x += n.vx;
+			n.y += n.vy;
+			if (n.x < 0 || n.x > w) n.vx *= -1;
+			if (n.y < 0 || n.y > h) n.vy *= -1;
+			n.x = Math.max(0, Math.min(w, n.x));
+			n.y = Math.max(0, Math.min(h, n.y));
+		}
+
+		for (var a = 0; a < nodes.length; a++) {
+			for (var b = a + 1; b < nodes.length; b++) {
+				var dx = nodes[a].x - nodes[b].x;
+				var dy = nodes[a].y - nodes[b].y;
+				var dist = Math.sqrt(dx * dx + dy * dy);
+				if (dist < linkDist) {
+					ctx.strokeStyle = "rgba(59, 130, 246, " + (0.16 * (1 - dist / linkDist)) + ")";
+					ctx.lineWidth = 1;
+					ctx.beginPath();
+					ctx.moveTo(nodes[a].x, nodes[a].y);
+					ctx.lineTo(nodes[b].x, nodes[b].y);
+					ctx.stroke();
+				}
+			}
+		}
+
+		var nearestNode = null, nearestDist = tendrilRadius;
+		if (mouseX !== null) {
+			for (var k = 0; k < nodes.length; k++) {
+				var ndx = nodes[k].x - mouseX, ndy = nodes[k].y - mouseY;
+				var ndist = Math.sqrt(ndx * ndx + ndy * ndy);
+				if (ndist < nearestDist) { nearestDist = ndist; nearestNode = nodes[k]; }
+			}
+		}
+
+		ctx.fillStyle = "rgba(147, 197, 253, 0.55)";
+		for (var j = 0; j < nodes.length; j++) {
+			if (nodes[j] === nearestNode) continue;
+			ctx.beginPath();
+			ctx.arc(nodes[j].x, nodes[j].y, 1.6, 0, Math.PI * 2);
+			ctx.fill();
+		}
+
+		if (nearestNode) {
+			var tendrilFade = 1 - nearestDist / tendrilRadius;
+			ctx.strokeStyle = "rgba(147, 197, 253, " + (tendrilFade * 0.5).toFixed(3) + ")";
+			ctx.lineWidth = 1;
+			ctx.beginPath();
+			ctx.moveTo(nearestNode.x, nearestNode.y);
+			ctx.lineTo(mouseX, mouseY);
+			ctx.stroke();
+
+			ctx.fillStyle = "rgba(147, 197, 253, " + (0.55 + tendrilFade * 0.45).toFixed(3) + ")";
+			ctx.beginPath();
+			ctx.arc(nearestNode.x, nearestNode.y, 1.6 + tendrilFade * 1.4, 0, Math.PI * 2);
+			ctx.fill();
+		}
+
+		requestAnimationFrame(tick);
+	}
+	requestAnimationFrame(tick);
+})();
+</script>
+
+<script>
+(function () {
+	"use strict";
+	var el = document.getElementById("local-time-value");
+	if (!el) return;
+
+	var formatter = new Intl.DateTimeFormat("en-AU", {
+		timeZone: "Australia/Sydney",
+		hour: "2-digit",
+		minute: "2-digit",
+		second: "2-digit",
+		hour12: false,
+	});
+
+	function tick() {
+		var now = new Date();
+		var ms = String(now.getMilliseconds()).padStart(3, "0");
+		el.textContent = formatter.format(now) + "." + ms;
+		requestAnimationFrame(tick);
+	}
+	tick();
+})();
+</script>
+
+<script>
+(function () {
+	"use strict";
+	var backToTop = document.getElementById("backToTop");
+	if (!backToTop) return;
+	var reduceMotionTop = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	backToTop.addEventListener("click", function () {
+		window.scrollTo({ top: 0, behavior: reduceMotionTop ? "auto" : "smooth" });
+	});
+})();
+</script>
+
+<script>
+(function () {
+	"use strict";
+	var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	var canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+	if (reduceMotion || !canHover) return;
+
+	var maxTilt = 9;
+	document.querySelectorAll(".bleed-img").forEach(function (el) {
+		el.addEventListener("mouseenter", function () {
+			el.classList.add("tilting");
+		});
+		el.addEventListener("mousemove", function (e) {
+			var r = el.getBoundingClientRect();
+			var px = (e.clientX - r.left) / r.width - 0.5;
+			var py = (e.clientY - r.top) / r.height - 0.5;
+			el.style.transform = "perspective(900px) rotateY(" + (px * maxTilt * 2) + "deg) rotateX(" + (-py * maxTilt * 2) + "deg) scale(1.04)";
+		});
+		el.addEventListener("mouseleave", function () {
+			el.style.transform = "";
+			el.classList.remove("tilting");
+		});
+	});
+})();
+</script>
+
+<script>
+(function () {
+	"use strict";
+	var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	if (reduceMotion || !("IntersectionObserver" in window)) return;
+
+	document.body.classList.add("js-reveal-ready");
+
+	// Letter-scramble/decode effect for section headers (h2) -- plays
+	// once, the first time each one scrolls into view. Same effect as
+	// the homepage.
+	var scrambleChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	function scrambleText(el) {
+		var finalText = el.textContent;
+		var duration = 1800;
+		var startTime = null;
+
+		function step(timestamp) {
+			if (startTime === null) startTime = timestamp;
+			var progress = Math.min((timestamp - startTime) / duration, 1);
+			var revealCount = Math.floor(progress * finalText.length);
+			var output = "";
+			for (var i = 0; i < finalText.length; i++) {
+				if (i < revealCount || finalText[i] === " ") {
+					output += finalText[i];
+				} else {
+					output += scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
+				}
+			}
+			el.textContent = output;
+			if (progress < 1) {
+				requestAnimationFrame(step);
+			} else {
+				el.textContent = finalText;
+			}
+		}
+		requestAnimationFrame(step);
+	}
+
+	var observer = new IntersectionObserver(function (entries) {
+		entries.forEach(function (entry) {
+			if (entry.isIntersecting) {
+				entry.target.classList.add("is-visible");
+				var heading = entry.target.querySelector("h2");
+				if (heading && !heading.dataset.scrambled) {
+					heading.dataset.scrambled = "true";
+					scrambleText(heading);
+				}
+			} else {
+				entry.target.classList.toggle("reveal-from-above", entry.boundingClientRect.top < 0);
+				entry.target.classList.remove("is-visible");
+			}
+		});
+	}, { threshold: 0.15, rootMargin: "0px 0px -10% 0px" });
+
+	// Elements already in the viewport on load (e.g. the first section
+	// right below the hero, unlike the homepage where the hero itself
+	// fills the screen) can have IntersectionObserver fire its first
+	// callback before the browser has actually painted the initial
+	// blurred/hidden state -- js-reveal-ready and is-visible then land in
+	// the same frame, so there's no "from" state to transition out of and
+	// the element just snaps straight to visible with no animation. A
+	// double rAF guarantees one full frame renders with the hidden state
+	// committed before observation (and therefore the first possible
+	// is-visible) begins.
+	requestAnimationFrame(function () {
+		requestAnimationFrame(function () {
+			document.querySelectorAll(".reveal").forEach(function (el) {
+				observer.observe(el);
+			});
+		});
+	});
+})();
+</script>
+
+<script>
+(function () {
+	"use strict";
+	var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	var canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+	if (reduceMotion || !canHover) return;
+
+	var dot = document.querySelector(".cursor-dot");
+	var ring = document.querySelector(".cursor-ring");
+	if (!dot || !ring) return;
+
+	var mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+	var ringEase = 0.18;
+	var started = false;
+
+	window.addEventListener("mousemove", function (e) {
+		mouseX = e.clientX;
+		mouseY = e.clientY;
+		dot.style.left = mouseX + "px";
+		dot.style.top = mouseY + "px";
+		if (!started) {
+			started = true;
+			ringX = mouseX;
+			ringY = mouseY;
+			document.body.classList.add("custom-cursor-active");
+		}
+	}, { passive: true });
+
+	function tick() {
+		ringX += (mouseX - ringX) * ringEase;
+		ringY += (mouseY - ringY) * ringEase;
+		ring.style.left = ringX + "px";
+		ring.style.top = ringY + "px";
+		requestAnimationFrame(tick);
+	}
+	requestAnimationFrame(tick);
+
+	document.querySelectorAll("a, button, .btn, input, textarea, [role='button']").forEach(function (el) {
+		el.addEventListener("mouseenter", function () { document.body.classList.add("cursor-hover"); });
+		el.addEventListener("mouseleave", function () { document.body.classList.remove("cursor-hover"); });
+	});
+
+	document.querySelectorAll(".bleed-img").forEach(function (el) {
+		el.addEventListener("mouseenter", function () { document.body.classList.add("cursor-view"); });
+		el.addEventListener("mouseleave", function () { document.body.classList.remove("cursor-view"); });
+	});
+})();
+</script>
+</body>
+</html>
