@@ -25,6 +25,16 @@ the page.
 
 **Sections:** About · Approach · Process · Selected Work · Notes · Contact
 
+## Boot sequence
+
+<div align="center">
+
+![The site's fake terminal boot sequence, resolving into the hero section](./assets/images/screenshots/boot.gif)
+
+<sub>A themed loading sequence before the hero loads. <a href="./assets/images/screenshots/boot.mp4">Full clip (mp4)</a>.</sub>
+
+</div>
+
 ## Selected work
 
 | Project | What it covers |
