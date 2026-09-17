@@ -95,3 +95,5 @@ python3 -m http.server 8000
 
 All rights reserved — this is a personal portfolio; the code is here for
 transparency and reference, not reuse.
+
+<!-- deploy pipeline test: 2026-09-17T15:04:49+10:00 -->
