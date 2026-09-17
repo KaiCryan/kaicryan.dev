@@ -96,3 +96,4 @@ python3 -m http.server 8000
 All rights reserved — this is a personal portfolio; the code is here for
 transparency and reference, not reuse.
 
+<!-- systemd timer test: 2026-09-17T15:32:52+10:00 -->
