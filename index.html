@@ -527,6 +527,11 @@
 		transition: filter 0.35s ease;
 	}
 	.project-block img:hover { filter: grayscale(0%) contrast(1.08); }
+	/* App UI screenshots (not moody photography) read worse under the
+	   grayscale-to-color/contrast-boost hover treatment above -- it just
+	   makes a light interface look darker and heavier. Opt out. */
+	.project-block img.ui-screenshot,
+	.project-block img.ui-screenshot:hover { filter: none; }
 	.project-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
 	.project-tag {
 		font-size: 0.7rem;
@@ -1188,6 +1193,89 @@
 			scroll-behavior: auto !important;
 		}
 	}
+
+	/* In-page GIF viewer for the RebootLoop card -- same backdrop-fade +
+	   frame-scale-in language as the CODE369 spec-page lightbox, trimmed
+	   down: no prev/next/counter (one asset, not a gallery) and no
+	   tile/WebGL reveal (that's a progressive-load effect for static
+	   JPGs; it would just freeze the GIF's animation on a canvas texture). */
+	.rl-lightbox {
+		position: fixed;
+		inset: 0;
+		z-index: 50;
+		background: rgba(6, 7, 9, 0);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 60px 20px;
+	}
+	.rl-lightbox[hidden] { display: none; }
+	.rl-lightbox.is-open { animation: rl-backdrop-in 0.3s ease-out both; }
+	@keyframes rl-backdrop-in {
+		from { background: rgba(6, 7, 9, 0); }
+		to { background: rgba(6, 7, 9, 0.92); }
+	}
+	.rl-lightbox.is-open .rl-lightbox-frame {
+		animation: rl-frame-in 0.3s cubic-bezier(.16, 1, .3, 1) both;
+	}
+	@keyframes rl-frame-in {
+		0% { transform: scale(0.94); opacity: 0; }
+		100% { transform: scale(1); opacity: 1; }
+	}
+	.rl-lightbox-frame {
+		position: relative;
+		display: inline-block;
+		max-width: min(900px, 90vw);
+		max-height: 82vh;
+		border-radius: 8px;
+		border: 1px solid var(--border);
+		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+		overflow: hidden;
+	}
+	.rl-lightbox-loadbar {
+		position: absolute;
+		top: 0; left: 0; right: 0;
+		height: 2px;
+		z-index: 5;
+		background: var(--accent);
+		transform: scaleX(0);
+		transform-origin: left;
+		opacity: 0;
+	}
+	.rl-lightbox-loadbar.loading { animation: rl-loadbar-fill 0.45s cubic-bezier(.16, 1, .3, 1) both; }
+	@keyframes rl-loadbar-fill {
+		0% { opacity: 1; transform: scaleX(0); }
+		70% { opacity: 1; transform: scaleX(1); }
+		100% { opacity: 0; transform: scaleX(1); }
+	}
+	.rl-lightbox-img { display: block; max-width: min(900px, 90vw); max-height: 82vh; object-fit: contain; }
+	.rl-lightbox-close {
+		position: fixed;
+		top: 20px; right: 20px;
+		width: 42px; height: 42px;
+		background: var(--surface);
+		border: 1px solid var(--border);
+		color: var(--ink);
+		border-radius: 999px;
+		font-size: 1.3rem;
+		cursor: pointer;
+		display: flex; align-items: center; justify-content: center;
+		transition: border-color 0.15s ease, color 0.15s ease,
+			transform 0.25s cubic-bezier(.34, 1.56, .64, 1), box-shadow 0.25s ease;
+	}
+	.rl-lightbox-close:hover, .rl-lightbox-close:focus-visible {
+		border-color: var(--accent);
+		color: var(--accent);
+		box-shadow: 0 0 0 7px var(--accent-soft);
+		transform: scale(1.12) rotate(90deg);
+	}
+	.rl-lightbox-close:active { transition-duration: 0.1s; transform: scale(0.9) rotate(90deg); }
+	.rl-gif-trigger {
+		all: unset;
+		display: block;
+		cursor: pointer;
+		width: 100%;
+	}
 </style>
 </head>
 <body>
@@ -1327,7 +1415,7 @@
 					<a class="link magnetic" href="https://github.com/RebootLoopMQ/RebootLoop" target="_blank" rel="noopener">View source <span class="arrow">→</span></a>
 				</div>
 			</div>
-			<div class="project-img-wrap"><a href="/assets/images/rebootloop-showcase.gif?v=20260917c" target="_blank" rel="noopener" aria-label="View the full RebootLoop walkthrough GIF"><img src="/assets/images/rebootloop-poster.jpg" alt="RebootLoop walkthrough: assessing a device, its recommended route, and the resulting device passport"></a></div>
+			<div class="project-img-wrap"><button type="button" class="rl-gif-trigger" id="rlGifTrigger" aria-haspopup="dialog" aria-label="View the full RebootLoop walkthrough GIF"><img class="ui-screenshot" src="/assets/images/rebootloop-poster.jpg" alt="RebootLoop walkthrough: assessing a device, its recommended route, and the resulting device passport"></button></div>
 		</div>
 
 		<div class="project-block reverse reveal">
@@ -1455,6 +1543,19 @@
 	</footer>
 
 </main>
+
+<!-- In-page viewer for the RebootLoop walkthrough GIF -- same interaction
+     as the CODE369 spec-page lightbox (backdrop fade, frame scale-in,
+     Escape/backdrop-click/close-button to dismiss, focus returned to the
+     trigger on close), trimmed to a single image since there's no gallery
+     to page through here. -->
+<div class="rl-lightbox" id="rlLightbox" role="dialog" aria-modal="true" aria-label="RebootLoop walkthrough" hidden>
+	<button type="button" class="rl-lightbox-close" id="rlLightboxClose" aria-label="Close">&times;</button>
+	<div class="rl-lightbox-frame">
+		<div class="rl-lightbox-loadbar" id="rlLightboxLoadbar" aria-hidden="true"></div>
+		<img class="rl-lightbox-img" id="rlLightboxImg" src="" alt="RebootLoop walkthrough: assessing a device, its recommended route, and the resulting device passport">
+	</div>
+</div>
 
 <!-- "Let's build something" fluid CTA expand: starts pinned to the
      button's own on-screen rect (set by JS on click) and grows into a
@@ -2020,6 +2121,50 @@
 	document.querySelectorAll(".project-block img").forEach(function (el) {
 		el.addEventListener("mouseenter", function () { document.body.classList.add("cursor-view"); });
 		el.addEventListener("mouseleave", function () { document.body.classList.remove("cursor-view"); });
+	});
+})();
+</script>
+
+<script>
+(function () {
+	"use strict";
+	var trigger = document.getElementById("rlGifTrigger");
+	var lightbox = document.getElementById("rlLightbox");
+	if (!trigger || !lightbox) return;
+
+	var img = document.getElementById("rlLightboxImg");
+	var loadbar = document.getElementById("rlLightboxLoadbar");
+	var closeBtn = document.getElementById("rlLightboxClose");
+	var GIF_URL = "/assets/images/rebootloop-showcase.gif?v=20260917c";
+	var lastFocused = null;
+
+	function open() {
+		lastFocused = document.activeElement;
+		loadbar.classList.remove("loading");
+		void loadbar.offsetWidth;
+		loadbar.classList.add("loading");
+		img.src = GIF_URL;
+		lightbox.hidden = false;
+		lightbox.classList.add("is-open");
+		document.documentElement.style.overflow = "hidden";
+		closeBtn.focus();
+	}
+
+	function close() {
+		lightbox.hidden = true;
+		lightbox.classList.remove("is-open");
+		document.documentElement.style.overflow = "";
+		img.src = ""; // stop the GIF playing/decoding in the background once closed
+		if (lastFocused) lastFocused.focus();
+	}
+
+	trigger.addEventListener("click", open);
+	closeBtn.addEventListener("click", close);
+	lightbox.addEventListener("click", function (e) {
+		if (e.target === lightbox) close();
+	});
+	document.addEventListener("keydown", function (e) {
+		if (!lightbox.hidden && e.key === "Escape") close();
 	});
 })();
 </script>
