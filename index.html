@@ -1300,10 +1300,7 @@
 		</div>
 		<div class="topnav-links">
 			<a href="#about">About</a>
-			<a href="#approach">Approach</a>
-			<a href="#process">Process</a>
 			<a href="#projects">Work</a>
-			<a href="#notes">Notes</a>
 			<a href="#contact">Contact</a>
 			<a class="magnetic" href="/assets/files/Kai-Cryan-Resume.pdf?v=20260917" target="_blank" rel="noopener">Resume</a>
 		</div>
@@ -1352,47 +1349,6 @@
 			<span class="project-tag">Git</span>
 			<span class="project-tag">WordPress</span>
 			<span class="project-tag">Home Assistant</span>
-		</div>
-	</section>
-
-	<div class="section-divider alt" aria-hidden="true"></div>
-
-	<section id="approach">
-		<div class="section-head reveal"><span class="kicker">How I work</span><h2>Approach</h2></div>
-		<div class="approach-list">
-			<div class="approach-item reveal">
-				<div class="approach-num">01</div>
-				<div>
-					<h3>Learn by building</h3>
-					<p>Go, at work, by shipping backend services against Postgres and Redis. C, in a university systems course, through file-parsing labs and pointer bugs. Docker and networking, by replacing my home router with a self-hosted server that now runs its own DNS for the whole house. Different contexts, same habit — build the real thing, not the tutorial version.</p>
-				</div>
-			</div>
-			<div class="approach-item reveal">
-				<div class="approach-num">02</div>
-				<div>
-					<h3>Team habits and solo habits, both</h3>
-					<p>At work that means PR review, tickets, and Go services built inside someone else's existing architecture. At home it means a 20-sensor Zigbee automation system and a DNS server nobody's reviewing before it ships. Doing both keeps each one honest — one keeps me disciplined, the other keeps me able to just start.</p>
-				</div>
-			</div>
-			<div class="approach-item reveal">
-				<div class="approach-num">03</div>
-				<div>
-					<h3>Built through iteration</h3>
-					<p>CODE369 went from a written spec and a hand-drawn wireframe to a hybrid WordPress-and-Shopify build, then kept changing after it launched. Nothing on this site — including the site itself — shipped in one pass.</p>
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<div class="section-divider alt" aria-hidden="true"></div>
-
-	<section id="process">
-		<div class="section-head reveal"><span class="kicker">The shape of it</span><h2>Process</h2></div>
-		<div class="process-timeline reveal">
-			<div class="process-step"><div class="process-dot" aria-hidden="true"></div><h3>Discovery</h3><p>A client's written spec and hand-drawn wireframe, or just an itch to replace another ISP router's defaults — figuring out what's actually worth building before committing to it.</p></div>
-			<div class="process-step"><div class="process-dot" aria-hidden="true"></div><h3>Build</h3><p>Design and development happen together, not as separate handoff stages.</p></div>
-			<div class="process-step"><div class="process-dot" aria-hidden="true"></div><h3>Launch</h3><p>Deployed to infrastructure I own and maintain — the same self-hosted server behind this site runs everything else I ship.</p></div>
-			<div class="process-step"><div class="process-dot" aria-hidden="true"></div><h3>Support</h3><p>CODE369 is still getting updates months after it first shipped, and the home server behind it never really stops needing attention either.</p></div>
 		</div>
 	</section>
 
@@ -1448,49 +1404,6 @@
 		</div>
 
 		<p class="more-projects-note">More projects will be added here as they launch.</p>
-	</section>
-
-	<div class="section-divider alt" aria-hidden="true"></div>
-
-	<section id="notes">
-		<div class="section-head reveal"><span class="kicker">Occasional writing</span><h2>Notes</h2></div>
-		<div class="notes-list">
-			<article class="note-item reveal">
-				<div class="note-meta"><span class="note-tag">Go</span><span class="note-date">Aug 2026</span></div>
-				<h3>Async work in Go: goroutines &amp; channels</h3>
-				<p>A slow network call inside a hot path can drag down the whole request if it runs synchronously. The fix: push the work onto a channel and return immediately, while a background goroutine started once at startup drains it and sends on its own schedule — paired with a blocking <code>Flush</code>/<code>Shutdown</code> at the end of the program's life so nothing queued gets silently dropped.</p>
-			</article>
-
-			<article class="note-item reveal">
-				<div class="note-meta"><span class="note-tag">Go</span><span class="note-date">Aug 2026</span></div>
-				<h3>Go, coming from Java: quirks worth knowing</h3>
-				<p>No exceptions — every fallible function returns <code>(result, error)</code>, so <code>if err != nil</code> is everywhere. <code>:=</code> infers a type and declares in one step, function-scope only. Every type has a zero value, so nothing is ever truly uninitialized. And <code>internal/</code> is enforced by the compiler, not a lint rule — outside code simply can't import it.</p>
-			</article>
-
-			<article class="note-item reveal">
-				<div class="note-meta"><span class="note-tag">CI/CD</span><span class="note-date">Aug 2026</span></div>
-				<h3>What actually happens in CI before code ships</h3>
-				<p>CI runs on every push — build, test, check quality — before a human looks at it. CD is the later, separate step that ships it. "Linting" is really layered checks (formatting, then bug-pattern detectors) that never run the code — that's what tests are for — and security scanning is a different question again: your own code for anti-patterns, or your dependencies' versions for known CVEs.</p>
-			</article>
-
-			<article class="note-item reveal">
-				<div class="note-meta"><span class="note-tag">Git</span><span class="note-date">Aug 2026</span></div>
-				<h3>A git workflow that keeps small teams sane</h3>
-				<p>One ticket, one branch, one PR, off an up-to-date main. Run whatever mirrors CI locally before opening the PR — find out in seconds, not in a queue. Push more commits to the same branch after review feedback instead of opening a new one. And stage deliberately: <code>git add &lt;file&gt;</code>, not <code>-A</code> out of habit.</p>
-			</article>
-
-			<article class="note-item reveal">
-				<div class="note-meta"><span class="note-tag">TypeScript</span><span class="note-date">Aug 2026</span></div>
-				<h3>TypeScript &amp; Expo: notes from a first React Native project</h3>
-				<p>Type annotations are checked at compile time and stripped before anything runs — what executes is plain JS. An <code>interface</code> is a compile-time-only contract, gone once the checker finishes. <code>unknown</code> is an honest placeholder for "exists, shape unconfirmed." And Expo hides most native-build complexity behind one command and a QR code, scanned with the Expo Go app.</p>
-			</article>
-
-			<article class="note-item reveal">
-				<div class="note-meta"><span class="note-tag">Tooling</span><span class="note-date">Aug 2026</span></div>
-				<h3>Two WSL gotchas that cost me an afternoon</h3>
-				<p>Both traced back to one root cause: a running terminal doesn't re-read its shell config after you edit it. An unquoted <code>PATH</code> export broke silently on an unescaped-parentheses Windows path, killing every new shell's startup — and a correctly-installed tool still came back "not found" in a terminal that had been open since before the fix.</p>
-			</article>
-		</div>
 	</section>
 
 	<div class="section-divider" aria-hidden="true"></div>
@@ -2372,7 +2285,7 @@
 	var textEl = document.getElementById("eyebrow-text");
 	if (!textEl) return;
 
-	var finalText = "Web Development & Infrastructure";
+	var finalText = "Go, Backend & Practical Systems";
 
 	function startTyping() {
 		if (reduceMotion) {
