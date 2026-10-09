@@ -428,6 +428,17 @@
 	.approach-item p { margin: 0; font-size: 0.95rem; max-width: 62ch; }
 
 	.about-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 56px; align-items: start; margin-bottom: 32px; }
+	/* Grayscale-to-color hover reuses the exact treatment project-block
+	   photos use (see that rule's filter values) so this reads as the
+	   same "moody photography" language rather than a new one. */
+	.about-photo {
+		width: 104px; height: 104px; border-radius: 50%; object-fit: cover;
+		float: left; margin: 2px 20px 12px 0; border: 1px solid var(--border);
+		box-shadow: 0 0 0 4px var(--surface);
+		filter: grayscale(35%) contrast(1.05);
+		transition: filter 0.35s ease, transform 0.35s cubic-bezier(.16,1,.3,1);
+	}
+	.about-photo:hover { filter: grayscale(0%) contrast(1.08); transform: scale(1.04); }
 	.about-bio p { margin: 0 0 18px; font-size: 1rem; line-height: 1.7; max-width: 58ch; color: var(--muted); }
 	.about-bio p:last-child { margin-bottom: 0; }
 	.about-bio strong { color: var(--ink); font-weight: 600; }
@@ -1328,6 +1339,7 @@
 		<div class="section-head reveal"><span class="kicker">Who I am</span><h2>About</h2></div>
 		<div class="about-grid reveal">
 			<div class="about-bio">
+				<img class="about-photo" src="/assets/images/kai-headshot.jpg?v=20261009" alt="Kai Cryan" width="104" height="104" loading="lazy">
 				<p>Penultimate-year <strong>Bachelor of Information Technology</strong> student at Macquarie University (Software Technology major), based in Sydney. I work as a Junior Developer at Japan Secure Solutions, and outside that I keep building things that actually run rather than just live in theory — this site, its case studies, and the server hosting all of it are part of that habit.</p>
 				<p>Day to day that's backend work in Go against PostgreSQL and Redis, freelance WordPress builds taken from spec through to launch, a home lab running my own DNS/DHCP and home automation, and daily algorithmic practice across Java and C++ — with C/C++ fundamentals the thing I'm actively learning right now.</p>
 			</div>
