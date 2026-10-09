@@ -527,6 +527,11 @@
 		0% { top: -5%; }
 		100% { top: 105%; }
 	}
+	/* Two photos sharing one project-img-wrap (that wrapper still owns the
+	   rounded corners/border/tilt) instead of one -- for an event with more
+	   than one photo worth keeping, rather than forcing a single pick. */
+	.photo-pair { display: grid; grid-template-rows: 1fr 1fr; gap: 4px; height: 100%; }
+	.photo-pair img { height: 100%; object-fit: cover; }
 	/* The border now lives on the wrapper (see above -- the thing that
 	   actually has the visible rounded-rectangle shape) rather than the
 	   image, since the image itself no longer has its own separate
@@ -1452,13 +1457,23 @@
 			<div class="project-img-wrap"><img src="/assets/images/pitch-for-the-planet-team.jpg?v=20261009" alt="The RebootLoop team presenting their poster at Pitch for the Planet 2026"></div>
 		</div>
 
-		<div class="notes-list">
-			<div class="note-item reveal">
-				<div class="note-meta"><span class="note-tag">CTF Competition</span><span class="note-date">2026</span></div>
+		<div class="project-block reverse reveal">
+			<div>
+				<div class="project-tags">
+					<span class="project-tag">CTF Competition</span>
+				</div>
 				<h3>Hack Mac 2026</h3>
-				<p>Macquarie University's cybersecurity CTF. Placed 6th in the combined division and 3rd in the Undergraduate category &mdash; named one of the event's 12 winning teams.</p>
+				<p>Macquarie University Cyber Security Hub's CTF. Placed 6th in the combined division and 3rd in the Undergraduate category &mdash; named one of the event's 12 winning teams.</p>
 			</div>
+			<div class="project-img-wrap">
+				<div class="photo-pair">
+					<img src="/assets/images/hackmac-team.jpg?v=20261009" alt="The Hack Mac 2026 team">
+					<img src="/assets/images/hackmac-scoreboard.jpg?v=20261009" alt="The live scoreboard at Hack Mac 2026, hosted by the Macquarie University Cyber Security Hub">
+				</div>
+			</div>
+		</div>
 
+		<div class="notes-list">
 			<div class="note-item reveal">
 				<div class="note-meta"><span class="note-tag">Industry Showcase</span><span class="note-date">2026</span></div>
 				<h3>(Tech)^US BIT Industry Showcase</h3>
